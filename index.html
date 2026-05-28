@@ -6,9 +6,19 @@
     <title>Send Love!</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* Fun bounce effect when tapping the button */
-        .heart-btn:active {
-            transform: scale(0.85);
+        /* The Realistic Heartbeat Animation */
+        @keyframes heartbeat {
+            0% { transform: scale(1); }
+            20% { transform: scale(1.18); } /* First quick expansion */
+            40% { transform: scale(1.02); } /* Slight dip */
+            60% { transform: scale(1.24); } /* Second larger expansion (the pump!) */
+            80% { transform: scale(0.95); } /* Brief snap back */
+            100% { transform: scale(1); }   /* Return to normal size */
+        }
+
+        /* This class will be instantly added via JavaScript when clicked */
+        .animate-pump {
+            animation: heartbeat 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) pairs;
         }
     </style>
 </head>
@@ -20,7 +30,7 @@
             <p class="text-rose-700 font-medium mt-2">用心分享吧！！</p>
         </div>
 
-        <button onclick="sendHeart()" class="heart-btn mx-auto w-48 h-48 bg-white rounded-full shadow-xl border border-rose-100 flex items-center justify-center text-7xl transition-transform duration-100 cursor-pointer focus:outline-none focus:ring-4 focus:ring-rose-300">
+        <button id="heart-btn" onclick="sendHeart()" class="w-48 h-48 bg-white rounded-full shadow-xl border border-rose-100 flex items-center justify-center text-7xl transition-transform duration-100 cursor-pointer focus:outline-none focus:ring-4 focus:ring-rose-300">
             ❤️
         </button>
 
@@ -30,17 +40,28 @@
     </div>
 
     <script>
-        // CHANGE THIS to a completely unique phrase for your event
+        // MUST MATCH the exact same topic name as your display script
         const TOPIC_NAME = 'my_secret_heart_ceremony_2026'; 
 
         function sendHeart() {
-            // Send signal to the main screen
+            const button = document.getElementById('heart-btn');
+
+            // 1. Trigger the pumping animation
+            button.classList.add('animate-pump');
+
+            // Remove the animation class right after it finishes (0.45 seconds) 
+            // so the user can click it again and see it pump every single time.
+            setTimeout(() => {
+                button.classList.remove('animate-pump');
+            }, 450);
+
+            // 2. Send signal to the main screen
             fetch(`https://ntfy.sh/${TOPIC_NAME}`, {
                 method: 'POST',
                 body: 'spawn_heart'
             }).catch(err => console.error("Error sending heart:", err));
 
-            // Quick visual toast confirmation
+            // 3. Quick visual toast confirmation
             const toast = document.getElementById('toast');
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
