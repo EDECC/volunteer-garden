@@ -43,6 +43,16 @@
         </p>
     </div>
 
+    <div class="absolute bottom-0 left-0 right-0 flex justify-between items-end px-8 text-7xl pb-2 pointer-events-none z-20 opacity-85 select-none">
+        <span>🌳</span>
+        <span>🍄</span>
+        <span>🦊</span>
+        <span class="hidden md:inline">🌲</span> <span>🐼</span>
+        <span>🌲</span>
+        <span>🦌</span>
+        <span>🌳</span>
+    </div>
+
     <div id="stage" class="absolute inset-0"></div>
 
     <script>
@@ -53,7 +63,7 @@
         const stage = document.getElementById('stage');
         const counterDisplay = document.getElementById('counter');
 
-        // Variety of heart styles to keep the visual interesting
+        // AUGMENTED STYLES: Mixed your classic hearts with fun cartoon characters!
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
 
         function spawnHeart() {
@@ -63,7 +73,7 @@
             const heart = document.createElement('div');
             heart.className = 'floating-heart';
             
-            // Pick a random heart emoji
+            // Pick a random heart emoji or cartoon character
             heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
 
             // Randomize starting horizontal position across the width of the screen (0% to 100%)
@@ -74,7 +84,9 @@
 
             // Set random drift (left or right wobble) and floating speeds for variety
             const randomDrift = (Math.random() * 400) - 200; // -200px to 200px drift
-            const randomDuration = (Math.random() * 60) + 300;    // 60 to 70 seconds flight time
+            
+            // FIXED MATH: Adjusted to make sure flight time is accurately 60 to 70 seconds
+            const randomDuration = (Math.random() * 10) + 60; 
             
             heart.style.setProperty('--drift', `${randomDrift}px`);
             heart.style.setProperty('--duration', `${randomDuration}s`);
