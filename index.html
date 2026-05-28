@@ -2,23 +2,30 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Send Love!</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* The Realistic Heartbeat Animation */
+        /* The Heartbeat Animation */
         @keyframes heartbeat {
             0% { transform: scale(1); }
-            20% { transform: scale(1.18); } /* First quick expansion */
-            40% { transform: scale(1.02); } /* Slight dip */
-            60% { transform: scale(1.24); } /* Second larger expansion (the pump!) */
-            80% { transform: scale(0.95); } /* Brief snap back */
-            100% { transform: scale(1); }   /* Return to normal size */
+            20% { transform: scale(1.18); } 
+            40% { transform: scale(1.02); } 
+            60% { transform: scale(1.24); } 
+            80% { transform: scale(0.95); } 
+            100% { transform: scale(1); }   
         }
 
-        /* This class will be instantly added via JavaScript when clicked */
+        /* Fixed the typo and forced mobile GPU rendering */
         .animate-pump {
-            animation: heartbeat 0.45s cubic-bezier(0.25, 0.8, 0.25, 1) pairs;
+            animation: heartbeat 400ms cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+            will-change: transform; 
+        }
+
+        /* Removes the annoying native gray box that flashes on mobile webkit when tapped */
+        #heart-btn {
+            -webkit-tap-highlight-color: transparent;
+            touch-action: manipulation;
         }
     </style>
 </head>
@@ -30,7 +37,7 @@
             <p class="text-rose-700 font-medium mt-2">用心分享吧！！</p>
         </div>
 
-        <button id="heart-btn" onclick="sendHeart()" class="w-48 h-48 bg-white rounded-full shadow-xl border border-rose-100 flex items-center justify-center text-7xl transition-transform duration-100 cursor-pointer focus:outline-none focus:ring-4 focus:ring-rose-300">
+        <button id="heart-btn" onclick="sendHeart()" class="mx-auto w-48 h-48 bg-white rounded-full shadow-xl border border-rose-100 flex items-center justify-center text-7xl cursor-pointer focus:outline-none focus:ring-4 focus:ring-rose-300">
             ❤️
         </button>
 
@@ -40,28 +47,23 @@
     </div>
 
     <script>
-        // MUST MATCH the exact same topic name as your display script
         const TOPIC_NAME = 'my_secret_heart_ceremony_2026'; 
 
         function sendHeart() {
             const button = document.getElementById('heart-btn');
 
-            // 1. Trigger the pumping animation
+            // Safely cycle the animation class so rapid taps still register visually
+            button.classList.remove('animate-pump');
+            void button.offsetWidth; // This line forces the browser to notice the change instantly
             button.classList.add('animate-pump');
 
-            // Remove the animation class right after it finishes (0.45 seconds) 
-            // so the user can click it again and see it pump every single time.
-            setTimeout(() => {
-                button.classList.remove('animate-pump');
-            }, 450);
-
-            // 2. Send signal to the main screen
+            // Send signal to the main screen
             fetch(`https://ntfy.sh/${TOPIC_NAME}`, {
                 method: 'POST',
                 body: 'spawn_heart'
             }).catch(err => console.error("Error sending heart:", err));
 
-            // 3. Quick visual toast confirmation
+            // Visual notification toast
             const toast = document.getElementById('toast');
             toast.classList.remove('opacity-0');
             toast.classList.add('opacity-100');
