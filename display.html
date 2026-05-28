@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Sunflower Garden</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        /* Pop-in and gentle swaying animation for sunflowers */
+        @keyframes growAndSway {
+            0% { transform: scale(0) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.2) rotate(10deg); }
+            100% { transform: scale(1) rotate(0deg); opacity: 1; }
+        }
+        .sunflower {
+            animation: growAndSway 1s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-b from-sky-200 via-sky-100 to-amber-50 min-h-screen overflow-hidden relative font-sans">
+
+    <div class="absolute top-8 left-1/2 -translate-x-1/2 z-10 text-center bg-white/80 backdrop-blur-md py-4 px-8 rounded-2xl shadow-lg border border-white/50 max-w-xl w-11/12">
+        <h1 class="text-3xl font-extrabold text-slate-800 tracking-tight">Our Volunteer Garden is Growing!</h1>
+        <p class="text-slate-600 font-medium mt-1">Total Volunteers Arrived: <span id="counter" class="text-amber-600 font-bold text-2xl ml-1">0</span></p>
+    </div>
+
+    <div id="garden" class="absolute inset-0 pt-32 p-10"></div>
+
+    <script>
+        // CRITICAL: Make sure this matches the EXACT same topic name as your scanner script
+        const TOPIC_NAME = 'my_secret_sunflower_garden_2026'; 
+        
+        let count = 0;
+        const garden = document.getElementById('garden');
+        const counterDisplay = document.getElementById('counter');
+
+        // Diverse selection of sunflower emojis/styles to look natural
+        const sunflowers = ['🌻', '🌻', '✨🌻✨', '🌻🍃'];
+
+        function spawnSunflower() {
+            count++;
+            counterDisplay.textContent = count;
+
+            // Create sunflower element
+            const el = document.createElement('div');
+            el.className = 'sunflower absolute select-none text-center pointer-events-none';
+            
+            // Randomly select a look
+            el.innerHTML = sunflowers[Math.floor(Math.random() * sunflowers.length)];
+
+            // Randomize sizes so the garden has depth
+            const randomSize = Math.floor(Math.random() * (70 - 40 + 1)) + 40; // Sizes between 40px and 70px
+            el.style.fontSize = `${randomSize}px`;
+
+            // Randomize positions safely within the garden bounds (avoiding overlapping the header too much)
+            const randomX = Math.floor(Math.random() * 90) + 5; // 5% to 95% width
+            const randomY = Math.floor(Math.random() * 70) + 20; // 20% to 90% height
+
+            el.style.left = `${randomX}%`;
+            el.style.top = `${randomY}%`;
+
+            // Append to screen
+            garden.appendChild(el);
+        }
+
+        // Connect to the real-time event stream
+        const eventSource = new EventSource(`https://ntfy.sh/${TOPIC_NAME}/sse`);
+        
+        eventSource.onmessage = (event) => {
+            const data = JSON.parse(event.data);
+            // We look for the message sent from the iPad
+            if (data.message === 'spawn_sunflower') {
+                spawnSunflower();
+            }
+        };
+
+        eventSource.onerror = (err) => {
+            console.log("Reconnecting to garden stream...", err);
+        };
+    </script>
+</body>
+</html>
