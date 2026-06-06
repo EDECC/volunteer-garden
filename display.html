@@ -6,7 +6,7 @@
     <title>Heart Display Wall</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <style>
-        /* Smooth floating animation up the screen for mini hearts */
+        /* Smooth floating animation up the screen */
         @keyframes floatUp {
             0% {
                 transform: translateY(10vh) translateX(0) scale(0.6);
@@ -38,7 +38,6 @@
             70% { transform: scale(0.95); }
             100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 30px rgba(244,63,94,0.6)); }
         }
-        /* Constant energetic thumping loop for the Huge Heart once visible */
         @keyframes giantHeartBeat {
             0%, 100% { transform: scale(1.1); }
             20% { transform: scale(1.25); }
@@ -70,7 +69,7 @@
         <span>🌳</span>
         <span>🍄</span>
         <span>🦊</span>
-        <span class="hidden md:inline">🌲</span>
+        <span class="hidden md:inline">🌲</span> 
         <span>🐼</span>
         <span>🌲</span>
         <span>🦌</span>
@@ -90,9 +89,8 @@
     <div id="stage" class="absolute inset-0"></div>
 
     <script>
-        // MUST MATCH the exact same topic name as your button script
         const TOPIC_NAME = 'my_secret_heart_ceremony_2026'; 
-        const GOAL = 20; // Target threshold for a full battery
+        const GOAL = 1000; 
 
         let heartCount = 0;
         const stage = document.getElementById('stage');
@@ -101,19 +99,33 @@
 
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕', '🦄', '🦊', '🐼', '🍄', '✨', '🎈'];
 
-        function spawnHeart() {
-            heartCount++;
+        // Core system update engine
+        function updateSystemState(shouldVisualSpawn) {
+            // Prevent negative logic bounds
+            if (heartCount < 0) heartCount = 0;
 
-            // 1. Calculate and update the battery bar smoothly
+            // Update Graphical Battery
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
-            // 2. Milestone Checker: Triggers the moment the 1,000th pump lands
-            if (heartCount === GOAL) {
+            // Evaluate Milestone Requirement
+            if (heartCount >= GOAL) {
                 triggerMilestoneCelebration();
+            } else {
+                // If admin lowers numbers back down, clean/hide the overlay panel
+                milestoneOverlay.classList.remove('flex');
+                milestoneOverlay.classList.add('hidden');
+                milestoneOverlay.classList.remove('opacity-100');
+                milestoneOverlay.classList.add('opacity-0');
             }
 
-            // 3. Keep spawning standard floating elements in the background
+            // Spawn floating background asset if requested
+            if (shouldVisualSpawn) {
+                createSingleFloatingAsset();
+            }
+        }
+
+        function createSingleFloatingAsset() {
             const heart = document.createElement('div');
             heart.className = 'floating-heart';
             heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
@@ -121,42 +133,57 @@
             heart.style.fontSize = `${Math.floor(Math.random() * 100) + 60}px`;
 
             const randomDrift = (Math.random() * 400) - 200; 
-            const randomDuration = (Math.random() * 10) + 60; // 60 to 70 seconds flight time
+            const randomDuration = (Math.random() * 10) + 60; 
             
             heart.style.setProperty('--drift', `${randomDrift}px`);
             heart.style.setProperty('--duration', `${randomDuration}s`);
 
             stage.appendChild(heart);
 
-            setTimeout(() => {
-                heart.remove();
-            }, randomDuration * 1000);
+            setTimeout(() => { heart.remove(); }, randomDuration * 1000);
         }
 
         function triggerMilestoneCelebration() {
-            // Unhide the overlay block
             milestoneOverlay.classList.remove('hidden');
             milestoneOverlay.classList.add('flex');
-            
-            // Trigger smooth CSS fade-in
             setTimeout(() => {
                 milestoneOverlay.classList.remove('opacity-0');
                 milestoneOverlay.classList.add('opacity-100');
             }, 50);
         }
 
-        // Connect to the real-time event stream
+        // Real-Time Event Controller Routing
         const eventSource = new EventSource(`https://ntfy.sh/${TOPIC_NAME}/sse`);
         
         eventSource.onmessage = (event) => {
             const data = JSON.parse(event.data);
-            if (data.message === 'spawn_heart') {
-                spawnHeart();
+            const msg = data.message;
+
+            if (msg === 'spawn_heart') {
+                // Regular participant tap
+                heartCount++;
+                updateSystemState(true);
+            } 
+            else if (msg.startsWith('admin_add:')) {
+                // Staff structural increment adjustments
+                const amount = parseInt(msg.split(':')[1], 10);
+                if (!isNaN(amount)) {
+                    heartCount += amount;
+                    updateSystemState(amount > 0); 
+                }
+            } 
+            else if (msg.startsWith('admin_set:')) {
+                // Staff structural explicit overwrite
+                const targetValue = parseInt(msg.split(':')[1], 10);
+                if (!isNaN(targetValue)) {
+                    heartCount = targetValue;
+                    updateSystemState(false); 
+                }
             }
         };
 
         eventSource.onerror = (err) => {
-            console.log("Reconnecting to stream...", err);
+            console.log("Reconnecting to core stream...", err);
         };
     </script>
 </body>
