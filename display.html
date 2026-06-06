@@ -4,11 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Display Wall</title>
+    <!-- Tailwind Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Fonts: Klee One (Premium organic hand-drawn style with excellent Cantonese character coverage) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Klee+One:wght@600;900&display=swap" rel="stylesheet">
+    
     <style>
-        /* HAND-DRAWN PAPER TEXTURE BACKGROUND */
+        /* HAND-DRAWN PAPER TEXTURE BACKGROUND FROM "V.1 - 複製.jpg" */
         .paper-texture {
+            font-family: 'Klee One', 'Chalkboard SE', 'DFKai-SB', sans-serif;
             background-color: #faf6f0;
             background-image: 
                 radial-gradient(circle at 30% 20%, rgba(251, 197, 197, 0.45) 0%, transparent 45%),
@@ -17,19 +25,18 @@
                 url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
         }
 
-        /* HIGH-CONTRAST TYPOGRAPHY ENGRAVING */
+        /* HIGH-CONTRAST INK TYPOGRAPHY ENHANCEMENT */
         .ink-headline {
             color: #221212;
-            /* Creates a clean white halo around the text to isolate it from background pastels */
             text-shadow: 
-                0 2px 4px rgba(255, 255, 255, 0.95), 
-                0 -2px 4px rgba(255, 255, 255, 0.95), 
-                2px 0 4px rgba(255, 255, 255, 0.95), 
-                -2px 0 4px rgba(255, 255, 255, 0.95),
-                0 0 20px rgba(255, 255, 255, 0.6);
+                0 3px 6px rgba(255, 255, 255, 0.95), 
+                0 -3px 6px rgba(255, 255, 255, 0.95), 
+                3px 0 6px rgba(255, 255, 255, 0.95), 
+                -3px 0 6px rgba(255, 255, 255, 0.95),
+                0 0 25px rgba(255, 255, 255, 0.7);
         }
 
-        /* ADVANCED LONG-DURATION TRAJECTORY ENGINE */
+        /* ADVANCED FLUID MOVEMENT TRAJECTORY ENGINE */
         @keyframes floatUp {
             0% { 
                 transform: translateY(0) translateX(0) scale(0.5); 
@@ -64,23 +71,29 @@
             z-index: 5;
         }
 
-        /* FIXED HIGH-CONTRAST SKETCH CHASSIS WITH CHROMATIC OUTER GLOWS */
-        .bat-white { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 30px rgba(255, 255, 255, 0.6) !important; }
-        .cap-white { background-color: #2b2b2b !important; }
+        /* HAND-SKETCHED ORGANIC CELL GEOMETRY FOR THE BATTERY CONTAINER */
+        .sketch-chassis {
+            /* Slight irregular border radiuses break the flat computer look to feel hand-drawn */
+            border-radius: 25px 35px 20px 30px / 12px 14px 15px 13px;
+        }
 
-        .bat-red { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(247, 168, 168, 0.8) !important; }
-        .cap-red { background-color: #2b2b2b !important; }
+        /* CHARCOAL SKETCH BOUNDARIES WITH SOFT PASTEL CHROMATIC GLOW FLUIDS */
+        .bat-white { border-color: #2b2b2b !important; box-shadow: 0 12px 35px rgba(0,0,0,0.07), 0 0 30px rgba(255, 255, 255, 0.6) !important; }
+        .cap-white { border-color: #2b2b2b !important; background-color: #e2e8f0 !important; }
 
-        .bat-yellow { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(252, 225, 129, 0.8) !important; }
-        .cap-yellow { background-color: #2b2b2b !important; }
+        .bat-red { border-color: #2b2b2b !important; box-shadow: 0 12px 35px rgba(0,0,0,0.07), 0 0 40px rgba(247, 168, 168, 0.85) !important; }
+        .cap-red { border-color: #2b2b2b !important; background-color: #f7a8a8 !important; }
 
-        .bat-green { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(170, 224, 193, 0.8) !important; }
-        .cap-green { background-color: #2b2b2b !important; }
+        .bat-yellow { border-color: #2b2b2b !important; box-shadow: 0 12px 35px rgba(0,0,0,0.07), 0 0 40px rgba(252, 225, 129, 0.85) !important; }
+        .cap-yellow { border-color: #2b2b2b !important; background-color: #fce181 !important; }
 
-        .bat-purple { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(216, 188, 237, 0.8) !important; }
-        .cap-purple { background-color: #2b2b2b !important; }
+        .bat-green { border-color: #2b2b2b !important; box-shadow: 0 12px 35px rgba(0,0,0,0.07), 0 0 40px rgba(170, 224, 193, 0.85) !important; }
+        .cap-green { border-color: #2b2b2b !important; background-color: #aae0c1 !important; }
 
-        /* WATERCOLOR PASTEL FILL GRADIENTS */
+        .bat-purple { border-color: #2b2b2b !important; box-shadow: 0 12px 35px rgba(0,0,0,0.07), 0 0 40px rgba(216, 188, 237, 0.85) !important; }
+        .cap-purple { border-color: #2b2b2b !important; background-color: #d8bced !important; }
+
+        /* WATERCOLOR PROGRESS FILL UTILITIES */
         .fill-white { background: linear-gradient(to right, #ffffff, #f1f5f9) !important; box-shadow: 0 0 25px rgba(255,255,255,0.8) !important; }
         .fill-red { background: linear-gradient(to right, #fca9a9, #f78686) !important; box-shadow: 0 0 30px rgba(247,134,134,0.6) !important; }
         .fill-yellow { background: linear-gradient(to right, #fdf0ad, #fce181) !important; box-shadow: 0 0 30px rgba(252,225,129,0.6) !important; }
@@ -108,16 +121,22 @@
 </head>
 <body onclick="handleManualTestClick(event)" class="paper-texture min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-11/12 max-w-6xl bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_20px_50px_rgba(100,50,70,0.06)] pointer-events-none">
+    <!-- HUD DECK CONTAINER (Layer priority z-20) -->
+    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-11/12 max-w-6xl bg-white/35 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_20px_50px_rgba(100,50,70,0.05)] pointer-events-none">
         
-        <h1 id="dynamic-headline" class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-10 leading-none whitespace-nowrap transition-all duration-300 ink-headline">
-            加油！！要儲滿电就靠大家啦！
+        <!-- COMPASSIONATE HANDWRITTEN CANTONESE HEADLINE -->
+        <h1 id="dynamic-headline" class="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black tracking-tight mb-12 leading-none whitespace-nowrap transition-all duration-300 ink-headline">
+            加油！！要儲滿電就靠大家啦！
         </h1>
         
-        <div class="flex items-center space-x-6 w-full max-w-5xl">
-            <div id="battery-body" class="flex-1 h-28 md:h-40 bg-white/60 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 bat-white">
+        <!-- EXTRA-LARGE HIGH-CONTRAST 3D ARTISTIC BATTERY HOUSING -->
+        <div class="flex items-center space-x-0 w-full max-w-5xl">
+            
+            <!-- Main Chassis Case (Includes hand-sketched structural curvature styling) -->
+            <div id="battery-body" class="flex-1 h-28 md:h-40 bg-white/65 border-6 md:border-8 relative overflow-hidden transition-all duration-300 shadow-2xl sketch-chassis bat-white z-10">
                 
-                <div class="absolute inset-0 opacity-[0.08] flex justify-between px-6 pointer-events-none z-0">
+                <!-- Internal Grid Shading Guidelines -->
+                <div class="absolute inset-0 opacity-[0.06] flex justify-between px-8 pointer-events-none z-0">
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
@@ -125,17 +144,24 @@
                     <div class="w-2 h-full bg-black"></div>
                 </div>
 
-                <div id="battery-fill" class="h-full w-0 rounded-2xl transition-all duration-300 ease-out z-10 fill-white"></div>
+                <!-- Synchronized Progress Fluid Layer -->
+                <div id="battery-fill" class="h-full w-0 rounded-xl transition-all duration-300 ease-out z-10 fill-white"></div>
                 
-                <div class="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
+                <!-- Anti-Glare Paper Highlight Filters -->
+                <div class="absolute inset-0 bg-gradient-to-b from-white/35 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
                 <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-30 pointer-events-none z-20"></div>
             </div>
             
-            <div id="battery-cap" class="w-6 h-14 md:w-8 md:h-24 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-[#2b2b2b]/30 transition-all duration-300 cap-white"></div>
+            <!-- SKETCHED ROUNDED TERMINAL CAP: Completely redesigned into a multi-layered terminal knob that aligns with the new layout -->
+            <div class="w-8 flex flex-col items-center justify-center -ml-2 z-0">
+                <div id="battery-cap" class="w-6 h-16 md:w-8 md:h-24 border-6 md:border-8 border-l-0 rounded-r-2xl transition-all duration-300 cap-white shadow-md shadow-black/5"></div>
+            </div>
+
         </div>
-        <p class="text-black/20 text-xs mt-4 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
+        <p class="text-black/10 text-xs mt-5 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
+    <!-- ADJUSTED LAUNCH HOLES LAYER: 5 Soft hand-shaded sketch openings -->
     <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 15%;"></div>
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 32%;"></div>
@@ -144,6 +170,7 @@
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 85%;"></div>
     </div>
 
+    <!-- FINAL CELEBRATION MILESTONE OVERLAY -->
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 backdrop-blur-2xl z-30 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
         <div class="text-center space-y-12 p-4 w-full max-w-7xl">
             <div class="text-[32rem] md:text-[46rem] leading-none select-none animate-huge-heart">💖</div>
@@ -157,6 +184,7 @@
         </div>
     </div>
 
+    <!-- Spawning playground canvas layer -->
     <div id="stage" class="absolute inset-0 z-0"></div>
 
     <script>
@@ -174,7 +202,6 @@
         const milestoneOverlay = document.getElementById('milestone-overlay');
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
 
-        // FIXED ARRAY MATRIX MAP FOR THE 5 HOLES
         const holePositions = [15, 32, 50, 68, 85];
 
         function updateSystemState(shouldVisualSpawn) {
@@ -183,9 +210,10 @@
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
-            batteryBody.className = "flex-1 h-28 md:h-40 bg-white/60 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 shadow-2xl ";
-            batteryCap.className = "w-6 h-14 md:w-8 md:h-24 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/40 transition-all duration-300 shadow-md shadow-black/5 ";
-            batteryFill.className = "h-full rounded-2xl transition-all duration-300 ease-out z-10 ";
+            // Maintain base handwriting variables cleanly while assigning states
+            batteryBody.className = "flex-1 h-28 md:h-40 bg-white/65 border-6 md:border-8 relative overflow-hidden transition-all duration-300 shadow-2xl sketch-chassis ";
+            batteryCap.className = "w-6 h-16 md:w-8 md:h-24 border-6 md:border-8 border-l-0 rounded-r-2xl transition-all duration-300 shadow-md shadow-black/5 ";
+            batteryFill.className = "h-full rounded-xl transition-all duration-300 ease-out z-10 ";
 
             if (progressPercentage <= 20) {
                 dynamicHeadline.textContent = "加油！！要儲滿電就靠大家啦！";
@@ -247,7 +275,7 @@
 
                     const randomDrift = (Math.random() * 800) - 400; 
                     
-                    // FIXED: RECONFIGURED TIME CADENCE RATIO FOR A ~45 SECOND TRIP
+                    // FIXED: STABILIZED VELOCITY FLOW RATIO FOR AN INSTANT ~45 SECOND ELEVATION PATH
                     const randomDuration = (Math.random() * 6) + 42; 
                     
                     heart.style.setProperty('--drift', `${randomDrift}px`);
