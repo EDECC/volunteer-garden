@@ -18,8 +18,8 @@
         <div class="space-y-3">
             <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Quick Adjustments</h2>
             <div class="grid grid-cols-2 gap-3">
-                <button onclick="sendAdminAction('admin_add', 5)" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold cursor-pointer">+5</button>
                 <button onclick="sendAdminAction('admin_add', 20)" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold cursor-pointer">+20</button>
+                <button onclick="sendAdminAction('admin_add', 50)" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold cursor-pointer">+50</button>
                 <button onclick="sendAdminAction('admin_add', -20)" class="bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl font-bold cursor-pointer">-20</button>
                 <button onclick="sendAdminAction('admin_add', -50)" class="bg-rose-700 hover:bg-rose-600 py-3 rounded-xl font-bold cursor-pointer">-50</button>
             </div>
@@ -31,26 +31,33 @@
             <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Set Exact Target Value</h2>
             <div class="flex space-x-2">
                 <input id="exact-val" type="number" placeholder="e.g. 995" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 font-mono text-xl focus:outline-none focus:border-amber-400">
-                <button onclick="setExactValue()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 rounded-xl font-extrabold cursor-pointer">Apply</button>
+                <button onclick="setExactValue()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 rounded-xl font-extrabold transition-colors cursor-pointer">Apply</button>
             </div>
         </div>
     </div>
 
     <script>
-        // PASTE YOUR SUPABASE KEYS HERE (MUST MATCH OTHERS)
-        const SUPABASE_URL = 'https://eftxqelokuvfgjqcxvzr.supabase.co/rest/v1/';
-        const SUPABASE_KEY = 'sb_publishable_AfbvA02-ptgVgGQm351iNA_5NIY_5lW';
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL_HERE';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
 
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const loveChannel = supabaseClient.channel('ceremony-room');
-        loveChannel.subscribe();
+        let loveChannel = null;
+
+        try {
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            loveChannel = supabaseClient.channel('ceremony-room');
+            loveChannel.subscribe();
+        } catch(e) {
+            console.error(e);
+        }
 
         function sendAdminAction(actionName, valueAmount) {
-            loveChannel.send({
-                type: 'broadcast',
-                event: 'interact',
-                payload: { action: actionName, value: valueAmount }
-            });
+            if(loveChannel) {
+                loveChannel.send({
+                    type: 'broadcast',
+                    event: 'interact',
+                    payload: { action: actionName, value: valueAmount }
+                });
+            }
         }
 
         function setExactValue() {
