@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Staff Control Panel</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans min-h-screen p-6 flex flex-col items-center justify-center">
+
+    <div class="w-full max-w-md bg-slate-800 rounded-3xl p-6 shadow-2xl border border-slate-700 space-y-8">
+        <div class="text-center">
+            <h1 class="text-2xl font-bold text-amber-400">Backstage Love Battery Control</h1>
+            <p class="text-slate-400 text-sm mt-1">Real-time Override System</p>
+        </div>
+
+        <div class="space-y-3">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Quick Adjustments</h2>
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="sendAdminCmd('admin_add:10')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold transition-colors cursor-pointer">+10 Hearts</button>
+                <button onclick="sendAdminCmd('admin_add:50')" class="bg-emerald-600 hover:bg-emerald-500 py-3 rounded-xl font-bold transition-colors cursor-pointer">+50 Hearts</button>
+                <button onclick="sendAdminCmd('admin_add:100')" class="bg-indigo-600 hover:bg-indigo-500 py-3 rounded-xl font-bold transition-colors cursor-pointer">+100 Hearts</button>
+                <button onclick="sendAdminCmd('admin_add:-50')" class="bg-rose-700 hover:bg-rose-600 py-3 rounded-xl font-bold transition-colors cursor-pointer">-50 Hearts</button>
+            </div>
+        </div>
+
+        <hr class="border-slate-700">
+
+        <div class="space-y-3">
+            <h2 class="text-sm font-semibold text-slate-400 uppercase tracking-wider">Set Exact Target Value</h2>
+            <div class="flex space-x-2">
+                <input id="exact-val" type="number" placeholder="e.g. 995" class="flex-1 bg-slate-950 border border-slate-700 rounded-xl px-4 py-3 font-mono text-xl focus:outline-none focus:border-amber-400">
+                <button onclick="setExactValue()" class="bg-amber-500 hover:bg-amber-400 text-slate-950 px-5 rounded-xl font-extrabold transition-colors cursor-pointer">Apply</button>
+            </div>
+        </div>
+
+        <div id="admin-toast" class="opacity-0 transition-opacity duration-300 bg-slate-950 text-amber-400 border border-amber-500/30 text-center py-2 rounded-xl text-sm font-mono">
+            Command Sent Status
+        </div>
+    </div>
+
+    <script>
+        // CRITICAL: Must match the exact same topic phrase as all your other files
+        const TOPIC_NAME = 'my_secret_heart_ceremony_2026'; 
+
+        function sendAdminCmd(commandString) {
+            fetch(`https://ntfy.sh/${TOPIC_NAME}`, {
+                method: 'POST',
+                body: commandString
+            })
+            .then(() => showToast(`Sent: ${commandString}`))
+            .catch(err => showToast(`Error: ${err}`));
+        }
+
+        function setExactValue() {
+            const input = document.getElementById('exact-val');
+            const value = parseInt(input.value, 10);
+            
+            if (isNaN(value) || value < 0) {
+                alert("Please enter a valid positive number.");
+                return;
+            }
+            
+            sendAdminCmd(`admin_set:${value}`);
+            input.value = ''; // clear input field
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('admin-toast');
+            toast.textContent = msg;
+            toast.classList.remove('opacity-0');
+            toast.classList.add('opacity-100');
+            setTimeout(() => {
+                toast.classList.remove('opacity-100');
+                toast.classList.add('opacity-0');
+            }, 1500);
+        }
+    </script>
+</body>
+</html>
