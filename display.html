@@ -10,7 +10,6 @@
         /* ADVANCED LONG-DURATION TRAJECTORY ENGINE */
         @keyframes floatUp {
             0% { 
-                /* 1. START LARGER FROM THE BEGINNING */
                 transform: translateY(0) translateX(0) scale(0.5); 
                 opacity: 0; 
             }
@@ -22,7 +21,6 @@
                 transform: translateY(-65vh) translateX(calc(var(--drift) * 0.55)) scale(1.6);
             }
             100% { 
-                /* 2. ENLARGE EVEN BIGGER AT THE TOP EDGE (Stays all the way up to -140vh) */
                 transform: translateY(-140vh) translateX(var(--drift)) scale(2.4); 
                 opacity: 0; 
             }
@@ -38,40 +36,29 @@
             height: 200px;
             margin-left: -100px; 
             transform-origin: center bottom;
-            animation: floatUp var(--duration) linear forwards; /* Changed to linear for steady, constant rise */
+            animation: floatUp var(--duration) linear forwards; 
             pointer-events: none;
             user-select: none;
             z-index: 5;
         }
 
-        /* DYNAMIC OUTLINE TEXT GLOW STYLES */
-        .glow-white {
-            color: #ffffff;
-            text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
-            -webkit-text-stroke: 2px #ffffff;
-        }
-        .glow-red {
-            color: #fff1f2;
-            text-shadow: 0 0 15px #ef4444, 0 0 25px #ef4444;
-            -webkit-text-stroke: 2px #dc2626;
-        }
-        .glow-yellow {
-            color: #fef9c3;
-            text-shadow: 0 0 15px #eab308, 0 0 25px #eab308;
-            -webkit-text-stroke: 2px #ca8a04;
-        }
-        .glow-green {
-            color: #f0fdf4;
-            text-shadow: 0 0 15px #22c55e, 0 0 25px #22c55e;
-            -webkit-text-stroke: 2px #16a34a;
-        }
-        .glow-purple {
-            color: #faf5ff;
-            text-shadow: 0 0 15px #a855f7, 0 0 25px #a855f7;
-            -webkit-text-stroke: 2px #9333ea;
-        }
+        /* 3D BATTERY DESIGN ENGINE - OUTLINE & GLOW CONFIGURATIONS */
+        .bat-white { border-color: #ffffff !important; box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 4px 20px rgba(255,255,255,0.1) !important; }
+        .cap-white { background-color: #ffffff !important; box-shadow: 4px 0 15px rgba(255, 255, 255, 0.4) !important; }
 
-        /* Milestone Animation: Grand finale center presentation overlay */
+        .bat-red { border-color: #f43f5e !important; box-shadow: 0 0 50px rgba(244, 63, 94, 0.6), inset 0 4px 20px rgba(244, 63, 94, 0.2) !important; }
+        .cap-red { background-color: #f43f5e !important; box-shadow: 4px 0 15px rgba(244, 63, 94, 0.6) !important; }
+
+        .bat-yellow { border-color: #eab308 !important; box-shadow: 0 0 50px rgba(234, 179, 8, 0.6), inset 0 4px 20px rgba(234, 179, 8, 0.2) !important; }
+        .cap-yellow { background-color: #eab308 !important; box-shadow: 4px 0 15px rgba(234, 179, 8, 0.6) !important; }
+
+        .bat-green { border-color: #22c55e !important; box-shadow: 0 0 50px rgba(34, 197, 94, 0.6), inset 0 4px 20px rgba(34, 197, 94, 0.2) !important; }
+        .cap-green { background-color: #22c55e !important; box-shadow: 4px 0 15px rgba(34, 197, 94, 0.6) !important; }
+
+        .bat-purple { border-color: #a855f7 !important; box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), inset 0 4px 20px rgba(168, 85, 247, 0.2) !important; }
+        .cap-purple { background-color: #a855f7 !important; box-shadow: 4px 0 15px rgba(168, 85, 247, 0.6) !important; }
+
+        /* Milestone Animation: Grand finale centerpiece presentation overlay */
         @keyframes giantHeartPop {
             0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 0px rgba(244,63,94,0)); }
             50% { transform: scale(1.25); filter: drop-shadow(0 0 100px rgba(244,63,94,1)); }
@@ -93,17 +80,31 @@
 <body onclick="handleManualTestClick(event)" class="bg-gradient-to-br from-amber-900 via-rose-950 to-slate-900 min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
     <div class="absolute top-28 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-4 pointer-events-none z-10 w-full max-w-5xl">
-        <h1 id="dynamic-headline" class="text-4xl md:text-5xl font-black tracking-wide drop-shadow-lg mb-6 transition-all duration-300 glow-white">
+        <h1 id="dynamic-headline" class="text-4xl md:text-5xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-400 to-amber-200 tracking-tight drop-shadow-md mb-6">
             加油！！要儲滿電就靠大家啦！
         </h1>
         
         <div class="flex items-center space-x-4 w-full max-w-4xl">
-            <div class="flex-1 h-20 md:h-28 bg-slate-950/80 border-5 md:border-7 border-pink-400/90 rounded-3xl p-2.5 relative overflow-hidden shadow-[0_0_50px_rgba(244,63,94,0.35)]">
-                <div id="battery-fill" class="h-full w-0 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 rounded-2xl transition-all duration-300 ease-out shadow-[0_0_30px_rgba(244,63,94,0.9)]"></div>
+            
+            <div id="battery-body" class="flex-1 h-20 md:h-28 bg-gradient-to-b from-slate-950 to-slate-900 border-5 md:border-7 rounded-3xl p-2 relative overflow-hidden transition-all duration-300 shadow-2xl bat-white">
+                
+                <div class="absolute inset-0 opacity-15 flex justify-between px-4 pointer-events-none z-0">
+                    <div class="w-1.5 h-full bg-white"></div><div class="w-1.5 h-full bg-white"></div>
+                    <div class="w-1.5 h-full bg-white"></div><div class="w-1.5 h-full bg-white"></div>
+                    <div class="w-1.5 h-full bg-white"></div><div class="w-1.5 h-full bg-white"></div>
+                    <div class="w-1.5 h-full bg-white"></div><div class="w-1.5 h-full bg-white"></div>
+                    <div class="w-1.5 h-full bg-white"></div>
+                </div>
+
+                <div id="battery-fill" class="h-full w-0 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 rounded-2xl transition-all duration-300 ease-out z-10 shadow-[0_0_35px_rgba(244,63,94,0.95)]"></div>
+                
+                <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
+                <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-30 pointer-events-none z-20"></div>
             </div>
-            <div class="w-5 h-10 md:w-7 md:h-16 bg-pink-400/90 rounded-r-2xl"></div>
+            
+            <div id="battery-cap" class="w-5 h-10 md:w-6 md:h-16 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/20 transition-all duration-300 cap-white shadow-lg shadow-black/40"></div>
         </div>
-        <p class="text-white/10 text-xs mt-3 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
+        <p class="text-white/10 text-xs mt-4 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
     <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
@@ -120,7 +121,7 @@
                 <h2 class="text-8xl md:text-12xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
                     愛心全面滿格！
                 </h2>
-                <p class="text-pink-100 text-6xl md:text-8xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
+                <p class="text-pink-100 text-5xl md:text-7xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
             </div>
         </div>
     </div>
@@ -136,6 +137,8 @@
         
         const stage = document.getElementById('stage');
         const batteryFill = document.getElementById('battery-fill');
+        const batteryBody = document.getElementById('battery-body');
+        const batteryCap = document.getElementById('battery-cap');
         const dynamicHeadline = document.getElementById('dynamic-headline');
         const milestoneOverlay = document.getElementById('milestone-overlay');
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
@@ -148,31 +151,36 @@
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
-            // DYNAMIC SLOGAN & OUTLINE CONTROLLER MATRIX
-            dynamicHeadline.className = "text-4xl md:text-5xl font-black tracking-wide drop-shadow-lg mb-6 transition-all duration-300 ";
+            // Core Tailwind reset mapping structure
+            batteryBody.className = "flex-1 h-20 md:h-28 bg-gradient-to-b from-slate-950 to-slate-900 border-5 md:border-7 rounded-3xl p-2 relative overflow-hidden transition-all duration-300 shadow-2xl ";
+            batteryCap.className = "w-5 h-10 md:w-6 md:h-16 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/20 transition-all duration-300 shadow-lg shadow-black/40 ";
             
             if (progressPercentage <= 20) {
                 dynamicHeadline.textContent = "加油！！要儲滿電就靠大家啦！";
-                dynamicHeadline.classList.add("glow-white");
+                batteryBody.classList.add("bat-white");
+                batteryCap.classList.add("cap-white");
             } 
             else if (progressPercentage > 20 && progressPercentage <= 50) {
                 dynamicHeadline.textContent = "啲電充得好快！大家好叻 好快手！";
-                dynamicHeadline.classList.add("glow-red");
+                batteryBody.classList.add("bat-red");
+                batteryCap.classList.add("cap-red");
             } 
             else if (progressPercentage > 50 && progressPercentage <= 70) {
                 dynamicHeadline.textContent = "過咗一半啦！繼續 唔好俾佢停！";
-                dynamicHeadline.classList.add("glow-yellow");
+                batteryBody.classList.add("bat-yellow");
+                batteryCap.classList.add("cap-yellow");
             } 
             else if (progressPercentage > 70 && progressPercentage <= 90) {
                 dynamicHeadline.textContent = "就爭少少咋！！";
-                dynamicHeadline.classList.add("glow-green");
+                batteryBody.classList.add("bat-green");
+                batteryCap.classList.add("cap-green");
             } 
             else if (progressPercentage > 90 && progressPercentage < 100) {
                 dynamicHeadline.textContent = "最後衝刺！！！！";
-                dynamicHeadline.classList.add("glow-purple");
+                batteryBody.classList.add("bat-purple");
+                batteryCap.classList.add("cap-purple");
             }
 
-            // Milestone Handler Evaluation
             if (heartCount >= GOAL) {
                 triggerMilestoneCelebration();
             } else {
@@ -198,13 +206,9 @@
                     heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
                     
                     heart.style.left = `${chosenHole}%`;
-                    
-                    // BASE FONT SCALE BOUNDS (Base scale multiplier handling starts inside styles above)
                     heart.style.fontSize = `${Math.floor(Math.random() * 40) + 80}px`;
 
                     const randomDrift = (Math.random() * 800) - 400; 
-                    
-                    // 3. SLOWER RISING SPEED (Calculates variance tightly around a 60-second flight path)
                     const randomDuration = (Math.random() * 8) + 56; 
                     
                     heart.style.setProperty('--drift', `${randomDrift}px`);
