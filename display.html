@@ -7,24 +7,23 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ADVANCED STAGGERED CLUSTER TRAJECTORY ENGINE */
+        /* ADVANCED LONG-DURATION TRAJECTORY ENGINE */
         @keyframes floatUp {
             0% { 
-                /* Start tiny, mathematically locked to the true center of the hole */
-                transform: translateY(0) translateX(0) scale(0.1); 
+                /* 1. START LARGER FROM THE BEGINNING */
+                transform: translateY(0) translateX(0) scale(0.5); 
                 opacity: 0; 
             }
-            10% { 
+            5% { 
                 opacity: 1; 
-                transform: translateY(-8vh) translateX(calc(var(--drift) * 0.12)) scale(0.7); 
+                transform: translateY(-6vh) translateX(calc(var(--drift) * 0.08)) scale(0.9); 
             }
             50% {
-                /* Mid-flight: Expand to full scale while swaying outwards */
-                transform: translateY(-55vh) translateX(calc(var(--drift) * 0.55)) scale(1.3);
+                transform: translateY(-65vh) translateX(calc(var(--drift) * 0.55)) scale(1.6);
             }
             100% { 
-                /* Grand scale exit at the top edge */
-                transform: translateY(-125vh) translateX(var(--drift)) scale(1.8); 
+                /* 2. ENLARGE EVEN BIGGER AT THE TOP EDGE (Stays all the way up to -140vh) */
+                transform: translateY(-140vh) translateX(var(--drift)) scale(2.4); 
                 opacity: 0; 
             }
         }
@@ -34,18 +33,45 @@
             justify-content: center;
             align-items: center;
             position: absolute;
-            bottom: 20px;       /* Pinned to the center line of the bottom openings */
-            width: 200px;       /* Fixed bounding box eliminates font alignment drift */
+            bottom: 20px;       
+            width: 200px;       
             height: 200px;
-            margin-left: -100px; /* Pulls the box back perfectly over the pivot point */
+            margin-left: -100px; 
             transform-origin: center bottom;
-            animation: floatUp var(--duration) cubic-bezier(0.12, 0.4, 0.29, 1) forwards;
+            animation: floatUp var(--duration) linear forwards; /* Changed to linear for steady, constant rise */
             pointer-events: none;
             user-select: none;
             z-index: 5;
         }
 
-        /* Milestone Animation: Absolute Full Screen Cinematic Popup Overlay */
+        /* DYNAMIC OUTLINE TEXT GLOW STYLES */
+        .glow-white {
+            color: #ffffff;
+            text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+            -webkit-text-stroke: 2px #ffffff;
+        }
+        .glow-red {
+            color: #fff1f2;
+            text-shadow: 0 0 15px #ef4444, 0 0 25px #ef4444;
+            -webkit-text-stroke: 2px #dc2626;
+        }
+        .glow-yellow {
+            color: #fef9c3;
+            text-shadow: 0 0 15px #eab308, 0 0 25px #eab308;
+            -webkit-text-stroke: 2px #ca8a04;
+        }
+        .glow-green {
+            color: #f0fdf4;
+            text-shadow: 0 0 15px #22c55e, 0 0 25px #22c55e;
+            -webkit-text-stroke: 2px #16a34a;
+        }
+        .glow-purple {
+            color: #faf5ff;
+            text-shadow: 0 0 15px #a855f7, 0 0 25px #a855f7;
+            -webkit-text-stroke: 2px #9333ea;
+        }
+
+        /* Milestone Animation: Grand finale center presentation overlay */
         @keyframes giantHeartPop {
             0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 0px rgba(244,63,94,0)); }
             50% { transform: scale(1.25); filter: drop-shadow(0 0 100px rgba(244,63,94,1)); }
@@ -66,9 +92,9 @@
 </head>
 <body onclick="handleManualTestClick(event)" class="bg-gradient-to-br from-amber-900 via-rose-950 to-slate-900 min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <div class="absolute top-12 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-4 pointer-events-none z-10 w-full max-w-5xl">
-        <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-400 to-amber-200 tracking-tight drop-shadow-md mb-6">
-            感謝各位用心分享!
+    <div class="absolute top-28 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-4 pointer-events-none z-10 w-full max-w-5xl">
+        <h1 id="dynamic-headline" class="text-4xl md:text-5xl font-black tracking-wide drop-shadow-lg mb-6 transition-all duration-300 glow-white">
+            加油！！要儲滿電就靠大家啦！
         </h1>
         
         <div class="flex items-center space-x-4 w-full max-w-4xl">
@@ -88,13 +114,13 @@
 
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-2xl z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
         <div class="text-center space-y-12 p-4 w-full max-w-7xl">
-            <div class="text-[28rem] md:text-[42rem] leading-none select-none animate-huge-heart">💖</div>
+            <div class="text-[32rem] md:text-[46rem] leading-none select-none animate-huge-heart">💖</div>
             
             <div class="space-y-4">
-                <h2 class="text-8xl md:text-11xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
+                <h2 class="text-8xl md:text-12xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
                     愛心全面滿格！
                 </h2>
-                <p class="text-pink-100 text-5xl md:text-7xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
+                <p class="text-pink-100 text-6xl md:text-8xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
             </div>
         </div>
     </div>
@@ -110,10 +136,10 @@
         
         const stage = document.getElementById('stage');
         const batteryFill = document.getElementById('battery-fill');
+        const dynamicHeadline = document.getElementById('dynamic-headline');
         const milestoneOverlay = document.getElementById('milestone-overlay');
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
 
-        // Center locations mapping directly to our 3 physical hole configurations
         const holePositions = [25, 50, 75];
 
         function updateSystemState(shouldVisualSpawn) {
@@ -122,6 +148,31 @@
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
+            // DYNAMIC SLOGAN & OUTLINE CONTROLLER MATRIX
+            dynamicHeadline.className = "text-4xl md:text-5xl font-black tracking-wide drop-shadow-lg mb-6 transition-all duration-300 ";
+            
+            if (progressPercentage <= 20) {
+                dynamicHeadline.textContent = "加油！！要儲滿電就靠大家啦！";
+                dynamicHeadline.classList.add("glow-white");
+            } 
+            else if (progressPercentage > 20 && progressPercentage <= 50) {
+                dynamicHeadline.textContent = "啲電充得好快！大家好叻 好快手！";
+                dynamicHeadline.classList.add("glow-red");
+            } 
+            else if (progressPercentage > 50 && progressPercentage <= 70) {
+                dynamicHeadline.textContent = "過咗一半啦！繼續 唔好俾佢停！";
+                dynamicHeadline.classList.add("glow-yellow");
+            } 
+            else if (progressPercentage > 70 && progressPercentage <= 90) {
+                dynamicHeadline.textContent = "就爭少少咋！！";
+                dynamicHeadline.classList.add("glow-green");
+            } 
+            else if (progressPercentage > 90 && progressPercentage < 100) {
+                dynamicHeadline.textContent = "最後衝刺！！！！";
+                dynamicHeadline.classList.add("glow-purple");
+            }
+
+            // Milestone Handler Evaluation
             if (heartCount >= GOAL) {
                 triggerMilestoneCelebration();
             } else {
@@ -136,27 +187,25 @@
             }
         }
 
-        // SIMULTANEOUS CLUSTER ENGINE: Fires a burst stream of 2 to 3 elements together out of a random hole
         function spawnStaggeredCluster() {
             const chosenHole = holePositions[Math.floor(Math.random() * holePositions.length)];
-            const burstCount = Math.floor(Math.random() * 2) + 2; // Returns either 2 or 3 items
+            const burstCount = Math.floor(Math.random() * 2) + 2; 
 
             for (let i = 0; i < burstCount; i++) {
-                // Stagger the items in the cluster by a few milliseconds so they cascade elegantly
                 setTimeout(() => {
                     const heart = document.createElement('div');
                     heart.className = 'floating-heart';
                     heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
                     
-                    // Assign to chosen target hole route
                     heart.style.left = `${chosenHole}%`;
                     
-                    // Distinct asset scaling parameters
-                    heart.style.fontSize = `${Math.floor(Math.random() * 60) + 70}px`;
+                    // BASE FONT SCALE BOUNDS (Base scale multiplier handling starts inside styles above)
+                    heart.style.fontSize = `${Math.floor(Math.random() * 40) + 80}px`;
 
-                    // Drifts generate a wide distribution path arc across left/right/center spaces
                     const randomDrift = (Math.random() * 800) - 400; 
-                    const randomDuration = (Math.random() * 8) + 16; // Elegant float cadence speed
+                    
+                    // 3. SLOWER RISING SPEED (Calculates variance tightly around a 60-second flight path)
+                    const randomDuration = (Math.random() * 8) + 56; 
                     
                     heart.style.setProperty('--drift', `${randomDrift}px`);
                     heart.style.setProperty('--duration', `${randomDuration}s`);
@@ -178,7 +227,7 @@
 
         function handleManualTestClick(e) {
             if(e.target === document.body || e.target.id === 'stage') {
-                heartCount += 50; // Jumps by 50 to clear testing sequences quickly
+                heartCount += 50; 
                 updateSystemState(true);
             }
         }
@@ -201,7 +250,7 @@
                 })
                 .subscribe();
         } catch (err) {
-            console.error("Supabase cluster link broken:", err);
+            console.error("Supabase link issue:", err);
         }
     </script>
 </body>
