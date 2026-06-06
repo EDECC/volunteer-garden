@@ -42,7 +42,7 @@
             z-index: 5;
         }
 
-        /* 3D BATTERY DESIGN ENGINE - OUTLINE & GLOW CONFIGURATIONS */
+        /* 3D BATTERY CHASSIS CASE GLOW CONFIGURATIONS */
         .bat-white { border-color: #ffffff !important; box-shadow: 0 0 40px rgba(255, 255, 255, 0.4), inset 0 4px 20px rgba(255,255,255,0.1) !important; }
         .cap-white { background-color: #ffffff !important; box-shadow: 4px 0 15px rgba(255, 255, 255, 0.4) !important; }
 
@@ -57,6 +57,13 @@
 
         .bat-purple { border-color: #a855f7 !important; box-shadow: 0 0 50px rgba(168, 85, 247, 0.6), inset 0 4px 20px rgba(168, 85, 247, 0.2) !important; }
         .cap-purple { background-color: #a855f7 !important; box-shadow: 4px 0 15px rgba(168, 85, 247, 0.6) !important; }
+
+        /* SYNCHRONIZED INTERNAL FLUID ENERGY GLOW STATE IMPLEMENTATIONS */
+        .fill-white { background: linear-gradient(to right, #e2e8f0, #ffffff) !important; shadow: 0 0 35px rgba(255,255,255,0.95) !important; }
+        .fill-red { background: linear-gradient(to right, #f43f5e, #be123c) !important; box-shadow: 0 0 35px rgba(244,63,94,0.95) !important; }
+        .fill-yellow { background: linear-gradient(to right, #eab308, #a16207) !important; box-shadow: 0 0 35px rgba(234,179,8,0.95) !important; }
+        .fill-green { background: linear-gradient(to right, #22c55e, #15803d) !important; box-shadow: 0 0 35px rgba(34,197,94,0.95) !important; }
+        .fill-purple { background: linear-gradient(to right, #a855f7, #7e22ce) !important; box-shadow: 0 0 35px rgba(168,85,247,0.95) !important; }
 
         /* Milestone Animation: Grand finale centerpiece presentation overlay */
         @keyframes giantHeartPop {
@@ -86,7 +93,7 @@
         </h1>
         
         <div class="flex items-center space-x-4 w-full max-w-4xl">
-            <div id="battery-body" class="flex-1 h-20 md:h-28 bg-gradient-to-b from-slate-950 to-slate-900 border-5 md:border-7 rounded-3xl p-2 relative overflow-hidden transition-all duration-300 bat-white">
+            <div id="battery-body" class="flex-1 h-20 md:h-28 bg-gradient-to-b from-slate-950 to-slate-900 border-5 md:border-7 rounded-3xl p-2 relative overflow-hidden transition-all duration-300 shadow-2xl bat-white">
                 
                 <div class="absolute inset-0 opacity-15 flex justify-between px-4 pointer-events-none z-0">
                     <div class="w-1.5 h-full bg-white"></div><div class="w-1.5 h-full bg-white"></div>
@@ -96,7 +103,7 @@
                     <div class="w-1.5 h-full bg-white"></div>
                 </div>
 
-                <div id="battery-fill" class="h-full w-0 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 rounded-2xl transition-all duration-300 ease-out z-10 shadow-[0_0_35px_rgba(244,63,94,0.95)]"></div>
+                <div id="battery-fill" class="h-full w-0 rounded-2xl transition-all duration-300 ease-out z-10 fill-white"></div>
                 
                 <div class="absolute inset-0 bg-gradient-to-b from-white/20 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
                 <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-30 pointer-events-none z-20"></div>
@@ -113,7 +120,7 @@
         <div class="absolute bottom-0 w-44 h-10 bg-slate-950 rounded-[50%] shadow-[inset_0_10px_14px_rgba(0,0,0,0.95)] border border-slate-800/60 -translate-x-1/2" style="left: 75%;"></div>
     </div>
 
-    <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-2xl z-30 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
+    <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-2xl z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
         <div class="text-center space-y-12 p-4 w-full max-w-7xl">
             <div class="text-[32rem] md:text-[46rem] leading-none select-none animate-huge-heart">💖</div>
             
@@ -121,7 +128,7 @@
                 <h2 class="text-8xl md:text-12xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
                     愛心全面滿格！
                 </h2>
-                <p class="text-pink-100 text-5xl md:text-7xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫慢與感謝 ✨</p>
+                <p class="text-pink-100 text-5xl md:text-7xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
             </div>
         </div>
     </div>
@@ -151,33 +158,41 @@
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
+            // Reset casing and core variables cleanly
             batteryBody.className = "flex-1 h-20 md:h-28 bg-gradient-to-b from-slate-950 to-slate-900 border-5 md:border-7 rounded-3xl p-2 relative overflow-hidden transition-all duration-300 shadow-2xl ";
             batteryCap.className = "w-5 h-10 md:w-6 md:h-16 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/20 transition-all duration-300 shadow-lg shadow-black/40 ";
-            
+            batteryFill.className = "h-full rounded-2xl transition-all duration-300 ease-out z-10 ";
+
+            // EVALUATE THRESHOLDS AND ALLOCATE MATCHING CHASSIS + INTERNAL ENERGY FLUID STATES
             if (progressPercentage <= 20) {
                 dynamicHeadline.textContent = "加油！！要儲滿電就靠大家啦！";
                 batteryBody.classList.add("bat-white");
                 batteryCap.classList.add("cap-white");
+                batteryFill.classList.add("fill-white");
             } 
             else if (progressPercentage > 20 && progressPercentage <= 50) {
                 dynamicHeadline.textContent = "啲電充得好快！大家好叻 好快手！";
                 batteryBody.classList.add("bat-red");
                 batteryCap.classList.add("cap-red");
+                batteryFill.classList.add("fill-red");
             } 
             else if (progressPercentage > 50 && progressPercentage <= 70) {
                 dynamicHeadline.textContent = "過咗一半啦！繼續 唔好俾佢停！";
                 batteryBody.classList.add("bat-yellow");
                 batteryCap.classList.add("cap-yellow");
+                batteryFill.classList.add("fill-yellow");
             } 
             else if (progressPercentage > 70 && progressPercentage <= 90) {
                 dynamicHeadline.textContent = "就爭少少咋！！";
                 batteryBody.classList.add("bat-green");
                 batteryCap.classList.add("cap-green");
+                batteryFill.classList.add("fill-green");
             } 
             else if (progressPercentage > 90 && progressPercentage < 100) {
                 dynamicHeadline.textContent = "最後衝刺！！！！";
                 batteryBody.classList.add("bat-purple");
                 batteryCap.classList.add("cap-purple");
+                batteryFill.classList.add("fill-purple");
             }
 
             if (heartCount >= GOAL) {
