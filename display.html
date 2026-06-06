@@ -5,23 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Display Wall</title>
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* Smooth floating animation up the screen */
         @keyframes floatUp {
-            0% {
-                transform: translateY(10vh) translateX(0) scale(0.6);
-                opacity: 0;
-            }
-            10% {
-                opacity: 1;
-            }
-            90% {
-                opacity: 0.9;
-            }
-            100% {
-                transform: translateY(-180vh) translateX(var(--drift)) scale(1.3);
-                opacity: 0;
-            }
+            0% { transform: translateY(10vh) translateX(0) scale(0.6); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 0.9; }
+            100% { transform: translateY(-180vh) translateX(var(--drift)) scale(1.3); opacity: 0; }
         }
         .floating-heart {
             position: absolute;
@@ -30,8 +20,6 @@
             pointer-events: none;
             user-select: none;
         }
-
-        /* Milestone Animation: Grand entrance for the Huge Heart */
         @keyframes giantHeartPop {
             0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 0px rgba(244,63,94,0)); }
             50% { transform: scale(1.4); filter: drop-shadow(0 0 50px rgba(244,63,94,0.8)); }
@@ -66,14 +54,9 @@
     </div>
 
     <div class="absolute bottom-0 left-0 right-0 flex justify-between items-end px-8 text-7xl pb-2 pointer-events-none z-20 opacity-85 select-none">
-        <span>🌳</span>
-        <span>🍄</span>
-        <span>🦊</span>
-        <span class="hidden md:inline">🌲</span> 
-        <span>🐼</span>
-        <span>🌲</span>
-        <span>🦌</span>
-        <span>🌳</span>
+        <span>🌳</span><span>🍄</span><span>🦊</span>
+        <span class="hidden md:inline">🌲</span><span>🐼</span><span>🌲</span>
+        <span>🦌</span><span>🌳</span>
     </div>
 
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/70 backdrop-blur-md z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
@@ -89,37 +72,33 @@
     <div id="stage" class="absolute inset-0"></div>
 
     <script>
-        const TOPIC_NAME = 'my_secret_heart_ceremony_2026'; 
-        const GOAL = 1000; 
+        // PASTE YOUR SUPABASE KEYS HERE (MUST MATCH INDEX.HTML)
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL_HERE';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
 
+        const GOAL = 1000; 
         let heartCount = 0;
+        
         const stage = document.getElementById('stage');
         const batteryFill = document.getElementById('battery-fill');
         const milestoneOverlay = document.getElementById('milestone-overlay');
-
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕', '🦄', '🦊', '🐼', '🍄', '✨', '🎈'];
 
-        // Core system update engine
         function updateSystemState(shouldVisualSpawn) {
-            // Prevent negative logic bounds
             if (heartCount < 0) heartCount = 0;
 
-            // Update Graphical Battery
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
-            // Evaluate Milestone Requirement
             if (heartCount >= GOAL) {
                 triggerMilestoneCelebration();
             } else {
-                // If admin lowers numbers back down, clean/hide the overlay panel
                 milestoneOverlay.classList.remove('flex');
                 milestoneOverlay.classList.add('hidden');
                 milestoneOverlay.classList.remove('opacity-100');
                 milestoneOverlay.classList.add('opacity-0');
             }
 
-            // Spawn floating background asset if requested
             if (shouldVisualSpawn) {
                 createSingleFloatingAsset();
             }
@@ -133,13 +112,12 @@
             heart.style.fontSize = `${Math.floor(Math.random() * 100) + 60}px`;
 
             const randomDrift = (Math.random() * 400) - 200; 
-            const randomDuration = (Math.random() * 10) + 60; 
+            const randomDuration = (Math.random() * 10) + 60; // 60 to 70 seconds flight time
             
             heart.style.setProperty('--drift', `${randomDrift}px`);
             heart.style.setProperty('--duration', `${randomDuration}s`);
 
             stage.appendChild(heart);
-
             setTimeout(() => { heart.remove(); }, randomDuration * 1000);
         }
 
@@ -152,39 +130,26 @@
             }, 50);
         }
 
-        // Real-Time Event Controller Routing
-        const eventSource = new EventSource(`https://ntfy.sh/${TOPIC_NAME}/sse`);
+        // Initialize Supabase Connection
+        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
         
-        eventSource.onmessage = (event) => {
-            const data = JSON.parse(event.data);
-            const msg = data.message;
-
-            if (msg === 'spawn_heart') {
-                // Regular participant tap
-                heartCount++;
-                updateSystemState(true);
-            } 
-            else if (msg.startsWith('admin_add:')) {
-                // Staff structural increment adjustments
-                const amount = parseInt(msg.split(':')[1], 10);
-                if (!isNaN(amount)) {
-                    heartCount += amount;
-                    updateSystemState(amount > 0); 
+        // Listen to Broadcast Signals
+        supabaseClient.channel('ceremony-room')
+            .on('broadcast', { event: 'interact' }, (object) => {
+                const payload = object.payload;
+                
+                if (payload.action === 'spawn_heart') {
+                    heartCount++;
+                    updateSystemState(true);
+                } else if (payload.action === 'admin_add') {
+                    heartCount += payload.value;
+                    updateSystemState(payload.value > 0);
+                } else if (payload.action === 'admin_set') {
+                    heartCount = payload.value;
+                    updateSystemState(false);
                 }
-            } 
-            else if (msg.startsWith('admin_set:')) {
-                // Staff structural explicit overwrite
-                const targetValue = parseInt(msg.split(':')[1], 10);
-                if (!isNaN(targetValue)) {
-                    heartCount = targetValue;
-                    updateSystemState(false); 
-                }
-            }
-        };
-
-        eventSource.onerror = (err) => {
-            console.log("Reconnecting to core stream...", err);
-        };
+            })
+            .subscribe();
     </script>
 </body>
 </html>
