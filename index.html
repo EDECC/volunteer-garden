@@ -17,8 +17,8 @@
 
     <div class="text-center flex flex-col items-center space-y-8 max-w-sm w-full">
         <div>
-            <h1 class="text-3xl font-bold text-rose-900 tracking-tight">歡迎來臨義工嘉許禮！</h1>
-            <p class="text-rose-700 font-medium mt-2">用心分享吧！！</p>
+            <h1 class="text-3xl font-bold text-rose-900 tracking-tight">Show Your Love!</h1>
+            <p class="text-rose-700 font-medium mt-2">Tap the heart below to send a floating heart to the main screen.</p>
         </div>
 
         <button id="heart-btn" onclick="sendHeart()" class="mx-auto w-48 h-48 bg-white rounded-full shadow-xl border border-rose-100 flex items-center justify-center text-7xl cursor-pointer focus:outline-none focus:ring-4 focus:ring-rose-300">
@@ -26,25 +26,30 @@
         </button>
 
         <div id="toast" class="opacity-0 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block">
-            已分享! ✨
+            Sent! ✨
         </div>
     </div>
 
     <script>
-        // PASTE YOUR SUPABASE KEYS HERE
-        const SUPABASE_URL = 'https://eftxqelokuvfgjqcxvzr.supabase.co/rest/v1/';
-        const SUPABASE_KEY = 'sb_publishable_AfbvA02-ptgVgGQm351iNA_5NIY_5lW';
+        // Paste your exact Supabase credentials between the single quotes
+        const SUPABASE_URL = 'YOUR_SUPABASE_PROJECT_URL_HERE';
+        const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY_HERE';
 
-        // Initialize Supabase Connection
-        const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        // Create a broadcast broadcast room channel
-        const loveChannel = supabaseClient.channel('ceremony-room');
-        loveChannel.subscribe();
+        let loveChannel = null;
+
+        // Fail-safe initialization wrapper
+        try {
+            const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+            loveChannel = supabaseClient.channel('ceremony-room');
+            loveChannel.subscribe();
+        } catch (error) {
+            console.error("Supabase configuration error:", error);
+        }
 
         function sendHeart() {
             const button = document.getElementById('heart-btn');
 
-            // Native hardware-accelerated heartbeat thump
+            // 1. RUN ANIMATION FIRST (Guaranteed to work even if connection fails)
             button.animate([
                 { transform: 'scale(1)' },
                 { transform: 'scale(1.18)', offset: 0.2 },
@@ -54,21 +59,19 @@
                 { transform: 'scale(1)' }
             ], { duration: 400, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)' });
 
-            // BROADCAST SIGNAL TO MAIN SCREEN INSTANTLY (Can handle hundreds/second)
-            loveChannel.send({
-                type: 'broadcast',
-                event: 'interact',
-                payload: { action: 'spawn_heart' }
-            });
+            // 2. Network broadcast with safety check
+            if (loveChannel) {
+                loveChannel.send({
+                    type: 'broadcast',
+                    event: 'interact',
+                    payload: { action: 'spawn_heart' }
+                });
+            }
 
-            // Fast Toast
+            // Show Toast
             const toast = document.getElementById('toast');
-            toast.classList.remove('opacity-0');
-            toast.classList.add('opacity-100');
-            setTimeout(() => {
-                toast.classList.remove('opacity-100');
-                toast.classList.add('opacity-0');
-            }, 600);
+            toast.className = "opacity-100 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block";
+            setTimeout(() => { toast.className = "opacity-0 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block"; }, 600);
         }
     </script>
 </body>
