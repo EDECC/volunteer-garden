@@ -7,89 +7,95 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* ADVANCED TRAJECTORY ENGINE */
+        /* ADVANCED STAGGERED CLUSTER TRAJECTORY ENGINE */
         @keyframes floatUp {
             0% { 
-                /* Start tiny, perfectly centered over the middle of the hole */
-                transform: translateY(0) translateX(-50%) scale(0.1); 
+                /* Start tiny, mathematically locked to the true center of the hole */
+                transform: translateY(0) translateX(0) scale(0.1); 
                 opacity: 0; 
             }
             10% { 
-                /* Fade in quickly right outside the lip of the hole */
                 opacity: 1; 
-                transform: translateY(-6vh) translateX(calc(-50% + var(--drift) * 0.15)) scale(0.7); 
+                transform: translateY(-8vh) translateX(calc(var(--drift) * 0.12)) scale(0.7); 
             }
             50% {
-                /* Mid-way point: Enlarge to normal size and sway sideways */
-                transform: translateY(-50vh) translateX(calc(-50% + var(--drift) * 0.6)) scale(1.2);
+                /* Mid-flight: Expand to full scale while swaying outwards */
+                transform: translateY(-55vh) translateX(calc(var(--drift) * 0.55)) scale(1.3);
             }
             100% { 
-                /* Grand scale at the top edge before dissolving completely */
-                transform: translateY(-120vh) translateX(calc(-50% + var(--drift))) scale(1.7); 
+                /* Grand scale exit at the top edge */
+                transform: translateY(-125vh) translateX(var(--drift)) scale(1.8); 
                 opacity: 0; 
             }
         }
         
         .floating-heart {
+            display: flex;
+            justify-content: center;
+            align-items: center;
             position: absolute;
-            bottom: 24px; /* Matches the exact inner lip of the physical stage holes */
-            transform-origin: bottom center;
-            animation: floatUp var(--duration) cubic-bezier(0.1, 0.45, 0.35, 1) forwards;
+            bottom: 20px;       /* Pinned to the center line of the bottom openings */
+            width: 200px;       /* Fixed bounding box eliminates font alignment drift */
+            height: 200px;
+            margin-left: -100px; /* Pulls the box back perfectly over the pivot point */
+            transform-origin: center bottom;
+            animation: floatUp var(--duration) cubic-bezier(0.12, 0.4, 0.29, 1) forwards;
             pointer-events: none;
             user-select: none;
             z-index: 5;
         }
 
-        /* Milestone Animation: Colossal center screen popup overlay */
+        /* Milestone Animation: Absolute Full Screen Cinematic Popup Overlay */
         @keyframes giantHeartPop {
             0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 0px rgba(244,63,94,0)); }
-            50% { transform: scale(1.3); filter: drop-shadow(0 0 90px rgba(244,63,94,0.95)); }
-            70% { transform: scale(0.92); }
-            100% { transform: scale(1.1); opacity: 1; filter: drop-shadow(0 0 60px rgba(244,63,94,0.75)); }
+            50% { transform: scale(1.25); filter: drop-shadow(0 0 100px rgba(244,63,94,1)); }
+            75% { transform: scale(0.9); }
+            100% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 70px rgba(244,63,94,0.8)); }
         }
         @keyframes giantHeartBeat {
-            0%, 100% { transform: scale(1.1); }
-            20% { transform: scale(1.32); }
-            40% { transform: scale(1.16); }
-            60% { transform: scale(1.45); }
+            0%, 100% { transform: scale(1.05); }
+            20% { transform: scale(1.22); }
+            40% { transform: scale(1.1); }
+            60% { transform: scale(1.3); }
         }
         .animate-huge-heart {
             animation: giantHeartPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
-                       giantHeartBeat 1.4s infinite 1.2s ease-in-out;
+                       giantHeartBeat 1.3s infinite 1.2s ease-in-out;
         }
     </style>
 </head>
 <body onclick="handleManualTestClick(event)" class="bg-gradient-to-br from-amber-900 via-rose-950 to-slate-900 min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-6 pointer-events-none z-10 w-full">
-        <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-400 to-amber-200 tracking-tight drop-shadow-md mb-8">
+    <div class="absolute top-12 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-4 pointer-events-none z-10 w-full max-w-5xl">
+        <h1 class="text-5xl md:text-6xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-rose-300 via-pink-400 to-amber-200 tracking-tight drop-shadow-md mb-6">
             感謝各位用心分享!
         </h1>
         
-        <div class="flex items-center space-x-3 w-11/12 max-w-4xl">
-            <div class="flex-1 h-16 md:h-24 bg-slate-950/75 border-4 md:border-6 border-pink-400/80 rounded-3xl p-2 relative overflow-hidden shadow-[0_0_40px_rgba(244,63,94,0.3)]">
-                <div id="battery-fill" class="h-full w-0 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 rounded-2xl transition-all duration-300 ease-out shadow-[0_0_25px_rgba(244,63,94,0.8)]"></div>
+        <div class="flex items-center space-x-4 w-full max-w-4xl">
+            <div class="flex-1 h-20 md:h-28 bg-slate-950/80 border-5 md:border-7 border-pink-400/90 rounded-3xl p-2.5 relative overflow-hidden shadow-[0_0_50px_rgba(244,63,94,0.35)]">
+                <div id="battery-fill" class="h-full w-0 bg-gradient-to-r from-pink-500 via-rose-500 to-amber-400 rounded-2xl transition-all duration-300 ease-out shadow-[0_0_30px_rgba(244,63,94,0.9)]"></div>
             </div>
-            <div class="w-4 h-8 md:w-6 md:h-12 bg-pink-400/80 rounded-r-xl"></div>
+            <div class="w-5 h-10 md:w-7 md:h-16 bg-pink-400/90 rounded-r-2xl"></div>
         </div>
-        <p class="text-white/10 text-xs mt-4 pointer-events-none">(Developer Mode: Click background to manually simulate clicks)</p>
+        <p class="text-white/10 text-xs mt-3 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
-    <div class="absolute bottom-6 left-0 right-0 h-6 pointer-events-none z-10 select-none">
-        <div class="absolute bottom-0 w-28 h-6 bg-slate-950 rounded-[50%] shadow-[inset_0_8px_10px_rgba(0,0,0,0.95)] border border-slate-800/50 -translate-x-1/2" style="left: 15%;"></div>
-        <div class="absolute bottom-0 w-28 h-6 bg-slate-950 rounded-[50%] shadow-[inset_0_8px_10px_rgba(0,0,0,0.95)] border border-slate-800/50 -translate-x-1/2" style="left: 32%;"></div>
-        <div class="absolute bottom-0 w-28 h-6 bg-slate-950 rounded-[50%] shadow-[inset_0_8px_10px_rgba(0,0,0,0.95)] border border-slate-800/50 -translate-x-1/2" style="left: 50%;"></div>
-        <div class="absolute bottom-0 w-28 h-6 bg-slate-950 rounded-[50%] shadow-[inset_0_8px_10px_rgba(0,0,0,0.95)] border border-slate-800/50 -translate-x-1/2" style="left: 68%;"></div>
-        <div class="absolute bottom-0 w-28 h-6 bg-slate-950 rounded-[50%] shadow-[inset_0_8px_10px_rgba(0,0,0,0.95)] border border-slate-800/50 -translate-x-1/2" style="left: 85%;"></div>
+    <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
+        <div class="absolute bottom-0 w-44 h-10 bg-slate-950 rounded-[50%] shadow-[inset_0_10px_14px_rgba(0,0,0,0.95)] border border-slate-800/60 -translate-x-1/2" style="left: 25%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-slate-950 rounded-[50%] shadow-[inset_0_10px_14px_rgba(0,0,0,0.95)] border border-slate-800/60 -translate-x-1/2" style="left: 50%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-slate-950 rounded-[50%] shadow-[inset_0_10px_14px_rgba(0,0,0,0.95)] border border-slate-800/60 -translate-x-1/2" style="left: 75%;"></div>
     </div>
 
-    <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/90 backdrop-blur-xl z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
-        <div class="text-center space-y-10 p-6 max-w-7xl">
-            <div class="text-[24rem] md:text-[34rem] leading-none select-none animate-huge-heart">💖</div>
-            <h2 class="text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
-                愛心全面滿格！
-            </h2>
-            <p class="text-pink-100 text-4xl md:text-6xl font-extrabold tracking-wide drop-shadow-xl opacity-95">滿滿的溫暖與感謝 ✨</p>
+    <div id="milestone-overlay" class="hidden fixed inset-0 bg-slate-950/95 backdrop-blur-2xl z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
+        <div class="text-center space-y-12 p-4 w-full max-w-7xl">
+            <div class="text-[28rem] md:text-[42rem] leading-none select-none animate-huge-heart">💖</div>
+            
+            <div class="space-y-4">
+                <h2 class="text-8xl md:text-11xl font-black text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-pink-400 to-rose-400 tracking-widest filter drop-shadow-2xl">
+                    愛心全面滿格！
+                </h2>
+                <p class="text-pink-100 text-5xl md:text-7xl font-black tracking-wide drop-shadow-2xl opacity-95">滿滿的溫暖與感謝 ✨</p>
+            </div>
         </div>
     </div>
 
@@ -107,8 +113,8 @@
         const milestoneOverlay = document.getElementById('milestone-overlay');
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
 
-        // Exact center alignment layout markers for corresponding holes
-        const holePositions = [15, 32, 50, 68, 85];
+        // Center locations mapping directly to our 3 physical hole configurations
+        const holePositions = [25, 50, 75];
 
         function updateSystemState(shouldVisualSpawn) {
             if (heartCount < 0) heartCount = 0;
@@ -126,36 +132,39 @@
             }
 
             if (shouldVisualSpawn) {
-                createSingleFloatingAsset();
+                spawnStaggeredCluster();
             }
         }
 
-        function createSingleFloatingAsset() {
-            const heart = document.createElement('div');
-            heart.className = 'floating-heart';
-            heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
-            
-            // SELECT RANDOM HOLE SOURCE
+        // SIMULTANEOUS CLUSTER ENGINE: Fires a burst stream of 2 to 3 elements together out of a random hole
+        function spawnStaggeredCluster() {
             const chosenHole = holePositions[Math.floor(Math.random() * holePositions.length)];
-            heart.style.left = `${chosenHole}%`;
-            
-            // Layout scale boundary properties
-            heart.style.fontSize = `${Math.floor(Math.random() * 60) + 60}px`;
+            const burstCount = Math.floor(Math.random() * 2) + 2; // Returns either 2 or 3 items
 
-            // DIRECTIONAL DRIFT CONTROLLER
-            // Generates a random side velocity vector (-350px left to +350px right)
-            const randomDrift = (Math.random() * 700) - 350; 
-            
-            // GRADUAL VELOCITY FLIGHT SPEED
-            // Adjusted slightly down (20 to 30 seconds) so hearts stay on screen longer
-            // but don't cause performance bloat with 300 active users hammering buttons.
-            const randomDuration = (Math.random() * 10) + 20; 
-            
-            heart.style.setProperty('--drift', `${randomDrift}px`);
-            heart.style.setProperty('--duration', `${randomDuration}s`);
+            for (let i = 0; i < burstCount; i++) {
+                // Stagger the items in the cluster by a few milliseconds so they cascade elegantly
+                setTimeout(() => {
+                    const heart = document.createElement('div');
+                    heart.className = 'floating-heart';
+                    heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
+                    
+                    // Assign to chosen target hole route
+                    heart.style.left = `${chosenHole}%`;
+                    
+                    // Distinct asset scaling parameters
+                    heart.style.fontSize = `${Math.floor(Math.random() * 60) + 70}px`;
 
-            stage.appendChild(heart);
-            setTimeout(() => { heart.remove(); }, randomDuration * 1000);
+                    // Drifts generate a wide distribution path arc across left/right/center spaces
+                    const randomDrift = (Math.random() * 800) - 400; 
+                    const randomDuration = (Math.random() * 8) + 16; // Elegant float cadence speed
+                    
+                    heart.style.setProperty('--drift', `${randomDrift}px`);
+                    heart.style.setProperty('--duration', `${randomDuration}s`);
+
+                    stage.appendChild(heart);
+                    setTimeout(() => { heart.remove(); }, randomDuration * 1000);
+                }, i * 220); 
+            }
         }
 
         function triggerMilestoneCelebration() {
@@ -169,7 +178,7 @@
 
         function handleManualTestClick(e) {
             if(e.target === document.body || e.target.id === 'stage') {
-                heartCount += 25; // Test clicks skip by 25 points to test faster
+                heartCount += 50; // Jumps by 50 to clear testing sequences quickly
                 updateSystemState(true);
             }
         }
@@ -192,7 +201,7 @@
                 })
                 .subscribe();
         } catch (err) {
-            console.error("Supabase engine down:", err);
+            console.error("Supabase cluster link broken:", err);
         }
     </script>
 </body>
