@@ -7,10 +7,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
-        /* HAND-DRAWN PAPER TEXTURE OVERLAY */
+        /* HAND-DRAWN PAPER TEXTURE BACKGROUND */
         .paper-texture {
             background-color: #faf6f0;
-            /* Creates a delicate, matte colored-pencil paper grain texture natively */
             background-image: 
                 radial-gradient(circle at 30% 20%, rgba(251, 197, 197, 0.45) 0%, transparent 45%),
                 radial-gradient(circle at 85% 30%, rgba(255, 244, 194, 0.55) 0%, transparent 40%),
@@ -18,7 +17,19 @@
                 url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
         }
 
-        /* MAJESTIC MAJESTIC LONG-DURATION TRAJECTORY ENGINE */
+        /* HIGH-CONTRAST TYPOGRAPHY ENGRAVING */
+        .ink-headline {
+            color: #221212;
+            /* Creates a clean white halo around the text to isolate it from background pastels */
+            text-shadow: 
+                0 2px 4px rgba(255, 255, 255, 0.95), 
+                0 -2px 4px rgba(255, 255, 255, 0.95), 
+                2px 0 4px rgba(255, 255, 255, 0.95), 
+                -2px 0 4px rgba(255, 255, 255, 0.95),
+                0 0 20px rgba(255, 255, 255, 0.6);
+        }
+
+        /* ADVANCED LONG-DURATION TRAJECTORY ENGINE */
         @keyframes floatUp {
             0% { 
                 transform: translateY(0) translateX(0) scale(0.5); 
@@ -53,21 +64,21 @@
             z-index: 5;
         }
 
-        /* COLORED PENCIL MATTE GLOW CONFIGURATIONS */
-        .bat-white { border-color: #ffffff !important; box-shadow: 0 0 35px rgba(255, 255, 255, 0.8), inset 0 4px 15px rgba(0,0,0,0.03) !important; }
-        .cap-white { background-color: #ffffff !important; }
+        /* FIXED HIGH-CONTRAST SKETCH CHASSIS WITH CHROMATIC OUTER GLOWS */
+        .bat-white { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 30px rgba(255, 255, 255, 0.6) !important; }
+        .cap-white { background-color: #2b2b2b !important; }
 
-        .bat-red { border-color: #f7a8a8 !important; box-shadow: 0 0 45px rgba(247, 168, 168, 0.7), inset 0 4px 15px rgba(0,0,0,0.03) !important; }
-        .cap-red { background-color: #f7a8a8 !important; }
+        .bat-red { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(247, 168, 168, 0.8) !important; }
+        .cap-red { background-color: #2b2b2b !important; }
 
-        .bat-yellow { border-color: #fce181 !important; box-shadow: 0 0 45px rgba(252, 225, 129, 0.7), inset 0 4px 15px rgba(0,0,0,0.03) !important; }
-        .cap-yellow { background-color: #fce181 !important; }
+        .bat-yellow { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(252, 225, 129, 0.8) !important; }
+        .cap-yellow { background-color: #2b2b2b !important; }
 
-        .bat-green { border-color: #aae0c1 !important; box-shadow: 0 0 45px rgba(170, 224, 193, 0.7), inset 0 4px 15px rgba(0,0,0,0.03) !important; }
-        .cap-green { background-color: #aae0c1 !important; }
+        .bat-green { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(170, 224, 193, 0.8) !important; }
+        .cap-green { background-color: #2b2b2b !important; }
 
-        .bat-purple { border-color: #d8bced !important; box-shadow: 0 0 45px rgba(216, 188, 237, 0.7), inset 0 4px 15px rgba(0,0,0,0.03) !important; }
-        .cap-purple { background-color: #d8bced !important; }
+        .bat-purple { border-color: #2b2b2b !important; box-shadow: 0 10px 30px rgba(0,0,0,0.06), 0 0 40px rgba(216, 188, 237, 0.8) !important; }
+        .cap-purple { background-color: #2b2b2b !important; }
 
         /* WATERCOLOR PASTEL FILL GRADIENTS */
         .fill-white { background: linear-gradient(to right, #ffffff, #f1f5f9) !important; box-shadow: 0 0 25px rgba(255,255,255,0.8) !important; }
@@ -97,38 +108,40 @@
 </head>
 <body onclick="handleManualTestClick(event)" class="paper-texture min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-11/12 max-w-6xl bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_20px_50px_rgba(100,50,70,0.08)] pointer-events-none">
+    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-11/12 max-w-6xl bg-white/40 backdrop-blur-xl border border-white/60 rounded-3xl shadow-[0_20px_50px_rgba(100,50,70,0.06)] pointer-events-none">
         
-        <h1 id="dynamic-headline" class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#4A2E2E] tracking-tight drop-shadow-sm mb-10 leading-none whitespace-nowrap transition-all duration-300">
-            加油！！要儲滿電就靠大家啦！
+        <h1 id="dynamic-headline" class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight mb-10 leading-none whitespace-nowrap transition-all duration-300 ink-headline">
+            加油！！要儲滿电就靠大家啦！
         </h1>
         
         <div class="flex items-center space-x-6 w-full max-w-5xl">
-            <div id="battery-body" class="flex-1 h-28 md:h-40 bg-white/50 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 shadow-[inset_0_4px_10px_rgba(0,0,0,0.02)] bat-white">
+            <div id="battery-body" class="flex-1 h-28 md:h-40 bg-white/60 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 bat-white">
                 
-                <div class="absolute inset-0 opacity-10 flex justify-between px-6 pointer-events-none z-0">
-                    <div class="w-1.5 h-full bg-[#4A2E2E]"></div><div class="w-1.5 h-full bg-[#4A2E2E]"></div>
-                    <div class="w-1.5 h-full bg-[#4A2E2E]"></div><div class="w-1.5 h-full bg-[#4A2E2E]"></div>
-                    <div class="w-1.5 h-full bg-[#4A2E2E]"></div><div class="w-1.5 h-full bg-[#4A2E2E]"></div>
-                    <div class="w-1.5 h-full bg-[#4A2E2E]"></div><div class="w-1.5 h-full bg-[#4A2E2E]"></div>
-                    <div class="w-1.5 h-full bg-[#4A2E2E]"></div>
+                <div class="absolute inset-0 opacity-[0.08] flex justify-between px-6 pointer-events-none z-0">
+                    <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                    <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                    <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                    <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
+                    <div class="w-2 h-full bg-black"></div>
                 </div>
 
                 <div id="battery-fill" class="h-full w-0 rounded-2xl transition-all duration-300 ease-out z-10 fill-white"></div>
                 
-                <div class="absolute inset-0 bg-gradient-to-b from-white/25 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
-                <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/10 to-transparent skew-x-30 pointer-events-none z-20"></div>
+                <div class="absolute inset-0 bg-gradient-to-b from-white/30 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
+                <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-30 pointer-events-none z-20"></div>
             </div>
             
-            <div id="battery-cap" class="w-6 h-14 md:w-8 md:h-24 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/40 transition-all duration-300 cap-white shadow-md shadow-black/5"></div>
+            <div id="battery-cap" class="w-6 h-14 md:w-8 md:h-24 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-[#2b2b2b]/30 transition-all duration-300 cap-white"></div>
         </div>
-        <p class="text-[#4A2E2E]/20 text-xs mt-4 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
+        <p class="text-black/20 text-xs mt-4 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
     <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
-        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 25%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 15%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 32%;"></div>
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 50%;"></div>
-        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 75%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 68%;"></div>
+        <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 85%;"></div>
     </div>
 
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 backdrop-blur-2xl z-30 flex flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
@@ -139,7 +152,7 @@
                 <h2 class="text-8xl md:text-12xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-pink-500 to-amber-500 tracking-widest filter drop-shadow-md">
                     愛心全面滿格！
                 </h2>
-                <p class="text-[#4A2E2E] text-5xl md:text-7xl font-black tracking-wide opacity-95">滿滿的溫暖與感謝 ✨</p>
+                <p class="text-[#221212] text-5xl md:text-7xl font-black tracking-wide opacity-95">滿滿的溫暖與感謝 ✨</p>
             </div>
         </div>
     </div>
@@ -161,7 +174,8 @@
         const milestoneOverlay = document.getElementById('milestone-overlay');
         const heartStyles = ['❤️', '💖', '💝', '💘', '💓', '💕'];
 
-        const holePositions = [25, 50, 75];
+        // FIXED ARRAY MATRIX MAP FOR THE 5 HOLES
+        const holePositions = [15, 32, 50, 68, 85];
 
         function updateSystemState(shouldVisualSpawn) {
             if (heartCount < 0) heartCount = 0;
@@ -169,10 +183,9 @@
             const progressPercentage = Math.min((heartCount / GOAL) * 100, 100);
             batteryFill.style.width = `${progressPercentage}%`;
 
-            batteryBody.className = "flex-1 h-28 md:h-40 bg-white/50 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 shadow-[inset_0_4px_10px_rgba(0,0,0,0.02)] ";
+            batteryBody.className = "flex-1 h-28 md:h-40 bg-white/60 border-6 md:border-8 rounded-3xl p-2.5 relative overflow-hidden transition-all duration-300 shadow-2xl ";
             batteryCap.className = "w-6 h-14 md:w-8 md:h-24 rounded-r-2xl border-t-2 border-b-2 border-r-2 border-white/40 transition-all duration-300 shadow-md shadow-black/5 ";
             batteryFill.className = "h-full rounded-2xl transition-all duration-300 ease-out z-10 ";
-            dynamicHeadline.className = "text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black text-[#4A2E2E] tracking-tight drop-shadow-sm mb-10 leading-none whitespace-nowrap transition-all duration-300";
 
             if (progressPercentage <= 20) {
                 dynamicHeadline.textContent = "加油！！要儲滿電就靠大家啦！";
@@ -233,7 +246,9 @@
                     heart.style.fontSize = `${Math.floor(Math.random() * 40) + 80}px`;
 
                     const randomDrift = (Math.random() * 800) - 400; 
-                    const randomDuration = (Math.random() * 8) + 56; 
+                    
+                    // FIXED: RECONFIGURED TIME CADENCE RATIO FOR A ~45 SECOND TRIP
+                    const randomDuration = (Math.random() * 6) + 42; 
                     
                     heart.style.setProperty('--drift', `${randomDrift}px`);
                     heart.style.setProperty('--duration', `${randomDuration}s`);
