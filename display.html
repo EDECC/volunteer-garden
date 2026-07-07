@@ -99,15 +99,15 @@
         /* Milestone Animation Overlay */
         @keyframes giantHeartPop {
             0% { transform: scale(0); opacity: 0; filter: drop-shadow(0 0 0px rgba(244,63,94,0)); }
-            50% { transform: scale(1.25); filter: drop-shadow(0 0 80px rgba(247,134,134,0.8)); }
-            75% { transform: scale(0.9); }
-            100% { transform: scale(1.05); opacity: 1; filter: drop-shadow(0 0 50px rgba(247,134,134,0.5)); }
+            50% { transform: scale(1.15); filter: drop-shadow(0 0 80px rgba(247,134,134,0.75)); }
+            75% { transform: scale(0.95); }
+            100% { transform: scale(1.0); opacity: 1; filter: drop-shadow(0 0 50px rgba(247,134,134,0.45)); }
         }
         @keyframes giantHeartBeat {
-            0%, 100% { transform: scale(1.05); }
-            20% { transform: scale(1.22); }
-            40% { transform: scale(1.1); }
-            60% { transform: scale(1.3); }
+            0%, 100% { transform: scale(1.0); }
+            20% { transform: scale(1.18); }
+            40% { transform: scale(1.06); }
+            60% { transform: scale(1.24); }
         }
         .animate-huge-heart {
             animation: giantHeartPop 1.2s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards,
@@ -124,9 +124,7 @@
         </h1>
         
         <div class="flex items-center space-x-0 w-full max-w-5xl">
-            
             <div id="battery-body" class="flex-1 h-28 md:h-40 bg-white/65 border-6 md:border-8 relative overflow-hidden transition-all duration-300 shadow-2xl sketch-chassis bat-cyan z-10">
-                
                 <div class="absolute inset-0 opacity-[0.05] flex justify-between px-8 pointer-events-none z-0">
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
@@ -134,17 +132,13 @@
                     <div class="w-2 h-full bg-black"></div><div class="w-2 h-full bg-black"></div>
                     <div class="w-2 h-full bg-black"></div>
                 </div>
-
                 <div id="battery-fill" class="h-full w-0 rounded-xl transition-all duration-300 ease-out z-10 fill-cyan"></div>
-                
                 <div class="absolute inset-0 bg-gradient-to-b from-white/35 via-white/5 to-transparent h-1/2 pointer-events-none z-20"></div>
                 <div class="absolute top-0 bottom-0 left-[-20%] w-[40%] bg-gradient-to-r from-transparent via-white/15 to-transparent skew-x-30 pointer-events-none z-20"></div>
             </div>
-            
             <div class="w-8 flex flex-col items-center justify-center -ml-2 z-0">
                 <div id="battery-cap" class="w-6 h-16 md:w-8 md:h-24 border-6 md:border-8 border-l-0 rounded-r-2xl transition-all duration-300 cap-cyan shadow-md shadow-black/5"></div>
             </div>
-
         </div>
         <p class="text-black/10 text-xs mt-5 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
@@ -157,17 +151,23 @@
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.2)] border border-[#d3c5b9] -translate-x-1/2" style="left: 85%;"></div>
     </div>
 
-    <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 backdrop-blur-2xl z-30 flex-col items-center justify-center pointer-events-none transition-opacity duration-1000 opacity-0">
-        <div class="text-center space-y-12 p-4 w-full max-w-7xl">
-            <div class="text-[32rem] md:text-[46rem] leading-none select-none animate-huge-heart">💖</div>
-            
-            <div class="space-y-4">
-                <h2 class="text-8xl md:text-12xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-pink-500 to-amber-500 tracking-widest filter drop-shadow-md">
-                    愛心全面滿格！
-                </h2>
-                <p class="text-[#221212] text-5xl md:text-7xl font-black tracking-wide opacity-95">滿滿的溫暖與感謝 ✨</p>
+    <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 backdrop-blur-2xl z-30 flex flex-col items-center justify-center p-12 pointer-events-none transition-opacity duration-1000 opacity-0 space-y-12">
+        
+        <div class="w-full flex items-center justify-center overflow-visible mt-6">
+            <div class="text-[22rem] sm:text-[26rem] md:text-[34rem] leading-none select-none animate-huge-heart">
+                💖
             </div>
         </div>
+        
+        <div class="text-center space-y-6 w-full max-w-7xl">
+            <h2 class="text-6xl sm:text-7xl md:text-9xl font-black text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-pink-500 to-amber-500 tracking-widest filter drop-shadow-md">
+                愛心全面滿格！
+            </h2>
+            <p class="text-[#221212] text-3xl sm:text-4xl md:text-6xl font-black tracking-wide opacity-95">
+                滿滿的溫暖與感謝 ✨
+            </p>
+        </div>
+
     </div>
 
     <div id="stage" class="absolute inset-0 z-0"></div>
@@ -259,8 +259,6 @@
                     heart.style.fontSize = `${Math.floor(Math.random() * 40) + 80}px`;
 
                     const randomDrift = (Math.random() * 800) - 400; 
-                    
-                    // FIXED: RE-ENGINEERED CADENCE CALCULATOR DELIVERING EXACTLY AN ACCELERATED ~45 SECOND TRIP TO TOP
                     const randomDuration = (Math.random() * 5) + 42; 
                     
                     heart.style.setProperty('--drift', `${randomDrift}px`);
