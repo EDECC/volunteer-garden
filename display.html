@@ -4,17 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Display Wall</title>
-    <!-- Tailwind Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <!-- Supabase Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <!-- Google Fonts: Zen Maru Gothic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* OPTIMIZED BACKDROP: Removed heavy SVG noise filters to liberate GPU processing cycles */
+        /* CLEAN HIGH-PERFORMANCE BACKDROP */
         .paper-texture {
             font-family: 'Zen Maru Gothic', 'Chalkboard SE', 'Noto Sans HK', 'Microsoft JhengHei', sans-serif;
             background-color: #faf6f0;
@@ -67,10 +64,8 @@
 </head>
 <body onclick="handleManualTestClick(event)" class="paper-texture min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <!-- HIGH-PERFORMANCE GRAPHICS ENGINE LAYER -->
-    <canvas id="stage" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+    <canvas id="stage" class="absolute inset-0 z-0 pointer-events-none" style="will-change: transform;"></canvas>
 
-    <!-- HUD DECK CONTAINER -->
     <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-[95%] max-w-7xl bg-white/92 border border-white/80 rounded-3xl shadow-[0_15px_35px_rgba(100,50,70,0.03)] pointer-events-none">
         <h1 id="dynamic-headline" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-12 leading-none whitespace-nowrap transition-all duration-300 ink-headline">
             加油！！要儲滿電就靠大家啦！
@@ -91,7 +86,6 @@
         <p class="text-black/10 text-xs mt-5 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
-    <!-- 5 LAUNCH HOLES -->
     <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 15%;"></div>
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 32%;"></div>
@@ -100,7 +94,6 @@
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 85%;"></div>
     </div>
 
-    <!-- CELEBRATION MILESTONE OVERLAY -->
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 z-30 flex flex-col items-center justify-center p-12 pointer-events-none transition-opacity duration-1000 opacity-0 space-y-12">
         <div class="w-full flex-1 flex items-end justify-center pb-8 overflow-visible">
             <div class="text-[20rem] sm:text-[24rem] md:text-[32rem] leading-none select-none animate-huge-heart">💖</div>
@@ -120,7 +113,6 @@
         const GOAL = 1000; 
         let heartCount = 0;
         
-        // CANVAS ARCHITECTURE INITIALIZATION
         const canvas = document.getElementById('stage');
         const ctx = canvas.getContext('2d');
         let activeHearts = [];
@@ -140,11 +132,30 @@
         
         const heartStyles = ['❤️', '🧡', '💛', '💚', '💜', '💖'];
         const holePositions = [15, 32, 50, 68, 85];
-        
-        // Safety cap for maximum concurrent vector canvas draws
-        const MAX_HEARTS_ALLOWED = 250;
+        const MAX_HEARTS_ALLOWED = 350; // Increased capacity safely due to caching boost
 
-        // HIGH-PERFORMANCE 60FPS REQUESTANIMATIONFRAME LOOP
+        // --- SPRITE IMAGE PRE-RENDERING CACHE SYSTEM ---
+        const heartSpritesCache = {};
+
+        function buildPreRenderedSprites() {
+            heartStyles.forEach(emoji => {
+                const offscreenCanvas = document.createElement('canvas');
+                // Pre-bake at 240px to ensure total crispness on big 4K venue walls
+                offscreenCanvas.width = 240;
+                offscreenCanvas.height = 240;
+                const oCtx = offscreenCanvas.getContext('2d');
+                
+                oCtx.font = "200px Arial, 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif";
+                oCtx.textAlign = 'center';
+                oCtx.textBaseline = 'middle';
+                oCtx.fillText(emoji, 120, 120);
+                
+                heartSpritesCache[emoji] = offscreenCanvas;
+            });
+        }
+        buildPreRenderedSprites();
+
+        // 60FPS GRAPHICS PASS ENGINE LOOP
         function animationFrameRender() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             const timestamp = Date.now();
@@ -153,13 +164,11 @@
                 const elapsed = timestamp - heart.startTime;
                 const progress = elapsed / heart.duration;
                 
-                if (progress >= 1) return false; // Garbage collection
+                if (progress >= 1) return false; 
 
-                // Precise translation matching the original CSS flight paths
                 const currentX = heart.startX + (progress * heart.drift);
                 const currentY = canvas.height - (progress * (canvas.height * 1.35));
                 
-                // Opacity curve interpolation (fade-in quickly, then slow fade-out)
                 let opacity = 1;
                 if (progress < 0.05) {
                     opacity = progress / 0.05;
@@ -167,17 +176,20 @@
                     opacity = 1 - ((progress - 0.05) / 0.95);
                 }
 
-                // Scale calculation interpolation (0.5x scaling up to 2.2x size)
                 const currentScale = 0.5 + (progress * 1.7);
                 const computedSize = heart.baseSize * currentScale;
 
-                // Native Hardware Accelerated 2D Context Render Pass
+                // ULTRA-FAST GRAPHICS HARDWARE BIT-BLIT DRAW PASS (No font processing overhead!)
                 ctx.save();
                 ctx.globalAlpha = opacity;
-                ctx.font = `bold ${computedSize}px 'Zen Maru Gothic', sans-serif`;
-                ctx.textAlign = 'center';
-                ctx.textBaseline = 'middle';
-                ctx.fillText(heart.emoji, currentX, currentY);
+                const spriteImage = heartSpritesCache[heart.emoji];
+                ctx.drawImage(
+                    spriteImage, 
+                    currentX - computedSize / 2, 
+                    currentY - computedSize / 2, 
+                    computedSize, 
+                    computedSize
+                );
                 ctx.restore();
 
                 return true;
@@ -185,7 +197,6 @@
 
             requestAnimationFrame(animationFrameRender);
         }
-        // Fire rendering loop immediately
         requestAnimationFrame(animationFrameRender);
 
         function updateSystemState(shouldVisualSpawn) {
@@ -255,12 +266,11 @@
                     if (activeHearts.length >= MAX_HEARTS_ALLOWED) return;
 
                     const startX = (chosenHolePct / 100) * canvas.width;
-                    const drift = (Math.random() * 600) - 300; 
-                    const duration = ((Math.random() * 5) + 42) * 1000; // Convert to ms
+                    const drift = (Math.random() * 500) - 250; 
+                    const duration = ((Math.random() * 5) + 42) * 1000; 
                     const emoji = heartStyles[Math.floor(Math.random() * heartStyles.length)];
-                    const baseSize = Math.floor(Math.random() * 25) + 65; // Base pixel text size range
+                    const baseSize = Math.floor(Math.random() * 20) + 65; 
 
-                    // Push directly into ultra-fast array registry bypass DOM injection completely
                     activeHearts.push({
                         startX,
                         drift,
