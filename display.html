@@ -4,22 +4,24 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Heart Display Wall</title>
+    <!-- Tailwind Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <!-- Supabase Engine -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Fonts: Zen Maru Gothic -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@700;900&display=swap" rel="stylesheet">
     
     <style>
-        /* HAND-DRAWN PAPER TEXTURE BACKGROUND */
+        /* OPTIMIZED BACKDROP: Removed heavy SVG noise filters to liberate GPU processing cycles */
         .paper-texture {
             font-family: 'Zen Maru Gothic', 'Chalkboard SE', 'Noto Sans HK', 'Microsoft JhengHei', sans-serif;
             background-color: #faf6f0;
             background-image: 
                 radial-gradient(circle at 30% 20%, rgba(251, 197, 197, 0.45) 0%, transparent 45%),
                 radial-gradient(circle at 85% 30%, rgba(255, 244, 194, 0.55) 0%, transparent 40%),
-                radial-gradient(circle at 50% 85%, rgba(194, 224, 244, 0.5) 0%, transparent 50%),
-                url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.02'/%3E%3C/svg%3E");
+                radial-gradient(circle at 50% 85%, rgba(194, 224, 244, 0.5) 0%, transparent 50%);
         }
 
         .ink-headline {
@@ -27,40 +29,17 @@
             text-shadow: 0 2px 4px rgba(255, 255, 255, 0.95), 0 -2px 4px rgba(255, 255, 255, 0.95), 2px 0 4px rgba(255, 255, 255, 0.95), -2px 0 4px rgba(255, 255, 255, 0.95);
         }
 
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.5); opacity: 0; }
-            5% { opacity: 1; transform: translateY(-6vh) scale(0.9); }
-            100% { transform: translateY(-135vh) translateX(var(--drift)) scale(2.2); opacity: 0; }
-        }
-        
-        .floating-heart {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            position: absolute;
-            bottom: 20px;       
-            width: 140px;       
-            height: 140px;
-            margin-left: -70px; 
-            transform-origin: center bottom;
-            animation: floatUp var(--duration) linear forwards; 
-            will-change: transform, opacity;
-            pointer-events: none;
-            user-select: none;
-            z-index: 5;
-        }
-
         .sketch-chassis { border-radius: 25px 35px 20px 30px / 12px 14px 15px 13px; }
 
         .bat-cyan { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(0,0,0,0.05); }
         .cap-cyan { border-color: #2b2b2b !important; background-color: #a5f1f5 !important; }
-        .bat-red { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(247, 168, 168, 0.3); }
+        .bat-red { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(247, 168, 168, 0.2); }
         .cap-red { border-color: #2b2b2b !important; background-color: #f7a8a8 !important; }
-        .bat-yellow { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(252, 225, 129, 0.3); }
+        .bat-yellow { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(252, 225, 129, 0.2); }
         .cap-yellow { border-color: #2b2b2b !important; background-color: #fce181 !important; }
-        .bat-green { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(170, 224, 193, 0.3); }
+        .bat-green { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(170, 224, 193, 0.2); }
         .cap-green { border-color: #2b2b2b !important; background-color: #aae0c1 !important; }
-        .bat-purple { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(216, 188, 237, 0.3); }
+        .bat-purple { border-color: #2b2b2b !important; box-shadow: 0 8px 20px rgba(216, 188, 237, 0.2); }
         .cap-purple { border-color: #2b2b2b !important; background-color: #d8bced !important; }
 
         .fill-cyan { background: linear-gradient(to right, #e2fbfc, #a5f1f5) !important; }
@@ -88,7 +67,11 @@
 </head>
 <body onclick="handleManualTestClick(event)" class="paper-texture min-h-screen overflow-hidden relative font-sans cursor-pointer">
     
-    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-[95%] max-w-7xl bg-white/92 border border-white/80 rounded-3xl shadow-[0_15px_35px_rgba(100,50,70,0.04)] pointer-events-none">
+    <!-- HIGH-PERFORMANCE GRAPHICS ENGINE LAYER -->
+    <canvas id="stage" class="absolute inset-0 z-0 pointer-events-none"></canvas>
+
+    <!-- HUD DECK CONTAINER -->
+    <div class="absolute top-40 left-1/2 -translate-x-1/2 flex flex-col items-center text-center p-10 z-20 w-[95%] max-w-7xl bg-white/92 border border-white/80 rounded-3xl shadow-[0_15px_35px_rgba(100,50,70,0.03)] pointer-events-none">
         <h1 id="dynamic-headline" class="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black tracking-tight mb-12 leading-none whitespace-nowrap transition-all duration-300 ink-headline">
             加油！！要儲滿電就靠大家啦！
         </h1>
@@ -108,6 +91,7 @@
         <p class="text-black/10 text-xs mt-5 pointer-events-none">(Developer Mode: Click background to manually simulate bursts)</p>
     </div>
 
+    <!-- 5 LAUNCH HOLES -->
     <div class="absolute bottom-6 left-0 right-0 h-8 pointer-events-none z-10 select-none">
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 15%;"></div>
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 32%;"></div>
@@ -116,6 +100,7 @@
         <div class="absolute bottom-0 w-44 h-10 bg-[#ebe2da] rounded-[50%] shadow-[inset_0_10px_12px_rgba(92,58,58,0.15)] border border-[#d3c5b9] -translate-x-1/2" style="left: 85%;"></div>
     </div>
 
+    <!-- CELEBRATION MILESTONE OVERLAY -->
     <div id="milestone-overlay" class="hidden fixed inset-0 bg-[#faf6f0]/95 z-30 flex flex-col items-center justify-center p-12 pointer-events-none transition-opacity duration-1000 opacity-0 space-y-12">
         <div class="w-full flex-1 flex items-end justify-center pb-8 overflow-visible">
             <div class="text-[20rem] sm:text-[24rem] md:text-[32rem] leading-none select-none animate-huge-heart">💖</div>
@@ -128,8 +113,6 @@
         </div>
     </div>
 
-    <div id="stage" class="absolute inset-0 z-0"></div>
-
     <script>
         const SUPABASE_URL = 'https://eftxqelokuvfgjqcxvzr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_AfbvA02-ptgVgGQm351iNA_5NIY_5lW';
@@ -137,18 +120,73 @@
         const GOAL = 1000; 
         let heartCount = 0;
         
-        const stage = document.getElementById('stage');
+        // CANVAS ARCHITECTURE INITIALIZATION
+        const canvas = document.getElementById('stage');
+        const ctx = canvas.getContext('2d');
+        let activeHearts = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
         const batteryFill = document.getElementById('battery-fill');
         const batteryBody = document.getElementById('battery-body');
         const batteryCap = document.getElementById('battery-cap');
         const dynamicHeadline = document.getElementById('dynamic-headline');
         const milestoneOverlay = document.getElementById('milestone-overlay');
         
-        // RECONFIGURED TO 6 DISTINCT MULTI-COLORED HEARTS (EXCLUDING BLUE)
         const heartStyles = ['❤️', '🧡', '💛', '💚', '💜', '💖'];
-
         const holePositions = [15, 32, 50, 68, 85];
-        const MAX_HEARTS_ALLOWED = 220;
+        
+        // Safety cap for maximum concurrent vector canvas draws
+        const MAX_HEARTS_ALLOWED = 250;
+
+        // HIGH-PERFORMANCE 60FPS REQUESTANIMATIONFRAME LOOP
+        function animationFrameRender() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const timestamp = Date.now();
+
+            activeHearts = activeHearts.filter(heart => {
+                const elapsed = timestamp - heart.startTime;
+                const progress = elapsed / heart.duration;
+                
+                if (progress >= 1) return false; // Garbage collection
+
+                // Precise translation matching the original CSS flight paths
+                const currentX = heart.startX + (progress * heart.drift);
+                const currentY = canvas.height - (progress * (canvas.height * 1.35));
+                
+                // Opacity curve interpolation (fade-in quickly, then slow fade-out)
+                let opacity = 1;
+                if (progress < 0.05) {
+                    opacity = progress / 0.05;
+                } else {
+                    opacity = 1 - ((progress - 0.05) / 0.95);
+                }
+
+                // Scale calculation interpolation (0.5x scaling up to 2.2x size)
+                const currentScale = 0.5 + (progress * 1.7);
+                const computedSize = heart.baseSize * currentScale;
+
+                // Native Hardware Accelerated 2D Context Render Pass
+                ctx.save();
+                ctx.globalAlpha = opacity;
+                ctx.font = `bold ${computedSize}px 'Zen Maru Gothic', sans-serif`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText(heart.emoji, currentX, currentY);
+                ctx.restore();
+
+                return true;
+            });
+
+            requestAnimationFrame(animationFrameRender);
+        }
+        // Fire rendering loop immediately
+        requestAnimationFrame(animationFrameRender);
 
         function updateSystemState(shouldVisualSpawn) {
             if (heartCount < 0) heartCount = 0;
@@ -207,33 +245,30 @@
         }
 
         function spawnStaggeredCluster() {
-            const currentHeartCount = stage.getElementsByClassName('floating-heart').length;
-            if (currentHeartCount >= MAX_HEARTS_ALLOWED) {
-                return; 
-            }
+            if (activeHearts.length >= MAX_HEARTS_ALLOWED) return; 
 
-            const chosenHole = holePositions[Math.floor(Math.random() * holePositions.length)];
+            const chosenHolePct = holePositions[Math.floor(Math.random() * holePositions.length)];
             const burstCount = Math.floor(Math.random() * 2) + 2; 
 
             for (let i = 0; i < burstCount; i++) {
                 setTimeout(() => {
-                    if (stage.getElementsByClassName('floating-heart').length >= MAX_HEARTS_ALLOWED) return;
+                    if (activeHearts.length >= MAX_HEARTS_ALLOWED) return;
 
-                    const heart = document.createElement('div');
-                    heart.className = 'floating-heart';
-                    heart.innerHTML = heartStyles[Math.floor(Math.random() * heartStyles.length)];
-                    
-                    heart.style.left = `${chosenHole}%`;
-                    heart.style.fontSize = `${Math.floor(Math.random() * 30) + 70}px`;
+                    const startX = (chosenHolePct / 100) * canvas.width;
+                    const drift = (Math.random() * 600) - 300; 
+                    const duration = ((Math.random() * 5) + 42) * 1000; // Convert to ms
+                    const emoji = heartStyles[Math.floor(Math.random() * heartStyles.length)];
+                    const baseSize = Math.floor(Math.random() * 25) + 65; // Base pixel text size range
 
-                    const randomDrift = (Math.random() * 600) - 300; 
-                    const randomDuration = (Math.random() * 5) + 42; 
-                    
-                    heart.style.setProperty('--drift', `${randomDrift}px`);
-                    heart.style.setProperty('--duration', `${randomDuration}s`);
-
-                    stage.appendChild(heart);
-                    setTimeout(() => { heart.remove(); }, randomDuration * 1000);
+                    // Push directly into ultra-fast array registry bypass DOM injection completely
+                    activeHearts.push({
+                        startX,
+                        drift,
+                        duration,
+                        startTime: Date.now(),
+                        emoji,
+                        baseSize
+                    });
                 }, i * 200); 
             }
         }
