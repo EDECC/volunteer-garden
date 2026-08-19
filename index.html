@@ -31,11 +31,15 @@
     </div>
 
     <script>
-        // Paste your exact Supabase credentials between the single quotes
+        // Paste your exact Supabase credentials
         const SUPABASE_URL = 'https://eftxqelokuvfgjqcxvzr.supabase.co';
         const SUPABASE_KEY = 'sb_publishable_AfbvA02-ptgVgGQm351iNA_5NIY_5lW';
 
+        // Matching the 6 colors from your display page (excluding blue)
+        const heartStyles = ['❤️', '🧡', '💛', '💚', '💜', '💖'];
+
         let loveChannel = null;
+        let pendingTaps = 0; // The hidden bucket that collects rapid taps
 
         // Fail-safe initialization wrapper
         try {
@@ -46,10 +50,14 @@
             console.error("Supabase configuration error:", error);
         }
 
+        // --- 1. LOCAL VISUAL INTERACTION (Runs Instantly) ---
         function sendHeart() {
             const button = document.getElementById('heart-btn');
 
-            // 1. RUN ANIMATION FIRST (Guaranteed to work even if connection fails)
+            // Add to the hidden tap bucket instead of sending to the network immediately
+            pendingTaps++;
+
+            // Run the heartbeat animation
             button.animate([
                 { transform: 'scale(1)' },
                 { transform: 'scale(1.18)', offset: 0.2 },
@@ -59,20 +67,36 @@
                 { transform: 'scale(1)' }
             ], { duration: 400, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)' });
 
-            // 2. Network broadcast with safety check
-            if (loveChannel) {
+            // Swap the button emoji for a random fun color!
+            button.innerText = heartStyles[Math.floor(Math.random() * heartStyles.length)];
+
+            // Show Toast (Using clearTimeout ensures the toast stays visible if they tap repeatedly)
+            const toast = document.getElementById('toast');
+            toast.className = "opacity-100 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block";
+            
+            if(window.toastTimeout) clearTimeout(window.toastTimeout);
+            window.toastTimeout = setTimeout(() => { 
+                toast.className = "opacity-0 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block"; 
+            }, 600);
+        }
+
+        // --- 2. NETWORK BATCHING ENGINE (Runs every 1 second) ---
+        setInterval(() => {
+            // Only send a network message if the user actually tapped in the last second
+            if (pendingTaps > 0 && loveChannel) {
+                
                 loveChannel.send({
                     type: 'broadcast',
                     event: 'interact',
-                    payload: { action: 'spawn_heart' }
+                    // Using 'admin_add' allows us to send a bulk value instead of 1 by 1
+                    payload: { action: 'admin_add', value: pendingTaps } 
                 });
-            }
 
-            // Show Toast
-            const toast = document.getElementById('toast');
-            toast.className = "opacity-100 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block";
-            setTimeout(() => { toast.className = "opacity-0 transition-opacity duration-300 bg-rose-600 text-white py-2 px-6 rounded-full font-semibold shadow-md inline-block"; }, 600);
-        }
+                // Empty the bucket for the next second!
+                pendingTaps = 0; 
+            }
+        }, 1000); // 1000ms = 1 second intervals. Safely bypasses Supabase spam limits.
     </script>
 </body>
+</html>
 </html>
