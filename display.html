@@ -256,14 +256,15 @@
         }
 
         function spawnStaggeredCluster() {
-            if (activeHearts.length >= MAX_HEARTS_ALLOWED) return; 
-
             const chosenHolePct = holePositions[Math.floor(Math.random() * holePositions.length)];
             const burstCount = Math.floor(Math.random() * 2) + 2; 
 
             for (let i = 0; i < burstCount; i++) {
                 setTimeout(() => {
-                    if (activeHearts.length >= MAX_HEARTS_ALLOWED) return;
+                    // THE FIX: If we hit the cap, remove the oldest heart to make room!
+                    if (activeHearts.length >= MAX_HEARTS_ALLOWED) {
+                        activeHearts.shift(); 
+                    }
 
                     const startX = (chosenHolePct / 100) * canvas.width;
                     const drift = (Math.random() * 500) - 250; 
@@ -272,12 +273,7 @@
                     const baseSize = Math.floor(Math.random() * 20) + 65; 
 
                     activeHearts.push({
-                        startX,
-                        drift,
-                        duration,
-                        startTime: Date.now(),
-                        emoji,
-                        baseSize
+                        startX, drift, duration, startTime: Date.now(), emoji, baseSize
                     });
                 }, i * 200); 
             }
